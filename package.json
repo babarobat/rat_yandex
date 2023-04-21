@@ -1,0 +1,11 @@
+{
+    "name": "com.kotenko.rat_yandex",
+    "version": "1.0.0",
+    "displayName": "Yandex Framework",
+    "description": "Yandex Framework",
+    "unity": "2019.1",
+    "unityRelease": "0b5",
+    "documentationUrl": "",
+    "changelogUrl": "",
+    "licensesUrl": ""
+  }
