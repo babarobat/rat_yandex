@@ -1,6 +1,4 @@
 using System;
-using JetBrains.Annotations;
-using Newtonsoft.Json;
 using UnityEngine;
 using Object = UnityEngine.Object;
 
@@ -8,9 +6,10 @@ namespace RatYandex.Runtime
 {
     public class YaApi
     {
-        public event Action OnPlayerInfoChanged;
-
         private readonly YaApiBridge _bridge;
+        private readonly PlayerInfoRequestProvider _playerInfoRequestProvider;
+        private readonly ReviewInfoRequestProvider _reviewInfoRequestProvider;
+        private readonly ReviewDialogRequestProvider _reviewDialogRequestProvider;
 
         public YaApi()
         {
@@ -18,19 +17,15 @@ namespace RatYandex.Runtime
             _bridge = container.AddComponent<YaApiBridge>();
             Object.DontDestroyOnLoad(_bridge);
 
-            _bridge.OnPlayerInfoReceived = UpdatePlayerInfo;
+            _playerInfoRequestProvider = new(_bridge);
+            _reviewInfoRequestProvider = new(_bridge);
+            _reviewDialogRequestProvider = new(_bridge);
         }
 
         public void WebWindowAlert(string message) => _bridge.WebWindowAlert(message);
         public void WebConsoleLog(string message) => _bridge.WebConsoleLog(message);
-        public void GetPlayerInfo() => _bridge.GetPlayerInfo();
-        public PlayerInfo PlayerInfo { get; private set; }
-
-        [UsedImplicitly]
-        public void UpdatePlayerInfo(string data)
-        {
-            PlayerInfo = JsonConvert.DeserializeObject<PlayerInfo>(data);
-            OnPlayerInfoChanged?.Invoke();
-        }
+        public void DialogReviewOpen(Action<bool> onClose, Action onError) => _reviewDialogRequestProvider.OpenReviewDialog(onClose, onError);
+        public void RequestPlayerInfo(Action<PlayerInfo> onSuccess, Action onError) => _playerInfoRequestProvider.Get(onSuccess, onError);
+        public void RequestReviewInfo(Action<ReviewInfo> onSuccess, Action onError) => _reviewInfoRequestProvider.Get(onSuccess, onError);
     }
 }

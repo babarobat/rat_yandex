@@ -44,7 +44,7 @@
         productName: "{{{ PRODUCT_NAME }}}",
         productVersion: "{{{ PRODUCT_VERSION }}}",
     };
-    
+
     console.log("start game");
     var container = document.querySelector("#unity-container");
     var canvas = document.querySelector("#unity-canvas");
@@ -113,7 +113,7 @@
     var player;
     var ysdk;
     var game;
-    
+
     console.log("start game3");
     var script = document.createElement("script");
     script.src = loaderUrl;
@@ -134,7 +134,7 @@
             alert(message);
         });
     };
-    
+
     YaGames.init().then(_ysdk => {
         console.log('Yandex SDK initialized');
         window.ysdk = _ysdk;
@@ -142,7 +142,7 @@
         ysdk.features.LoadingAPI?.ready();
         auth();
     });
-    
+
     function auth() {
         console.log('start auth');
         initPlayer().then(_player => {
@@ -174,17 +174,59 @@
     }
 
     function SendPlayerInfo() {
-        var info = {
-            "name": player.getName(),
-            "photo": player.getPhoto(),
-        };
-        var json = JSON.stringify(info);
+        try {
+            var info = {
+                "name": player.getName(),
+                "photo": player.getPhoto(),
+            };
+            var json = JSON.stringify(info);
 
-        SendMessage("UpdatePlayerInfo", json);
+            SendMessage("UpdatePlayerInfo", json);
+        } catch (e) {
+            console.error(e);
+            SendMessage("UpdatePlayerInfoError");
+        }
+    }
+
+    function SendReviewInfo() {
+        try {
+            ysdk.feedback.canReview()
+                .then(({value, reason}) => {
+                    var info = {
+                        "is_review_valid": value,
+                        "reason": reason,
+                    };
+                    var json = JSON.stringify(info);
+
+                    SendMessage("UpdateReviewInfo", json);
+                });
+        } catch (e) {
+            console.error(e);
+            SendMessage("UpdateReviewInfoError");
+        }
+    }
+
+    function DialogReviewOpen() {
+        console.log('dialog review open');
+        try {
+            ysdk.feedback.requestReview()
+                .then(({feedbackSent}) => {
+                    console.log('feedbackSent ', feedbackSent);
+                    if (feedbackSent) {
+                        SendMessage('DialogReviewClosed', 'true');
+                    } else {
+                        SendMessage('DialogReviewClosed', 'false');
+                    }
+                    window.focus();
+                });
+        } catch (e) {
+            console.error('CRASH Review: ', e.message);
+            window.focus();
+        }
     }
 
     function SendMessage(methodName, args) {
-        console.log('send message to '+ methodName+': ' + args)
+        console.log('send message to ' + methodName + ': ' + args)
         game.SendMessage("ya_api", methodName, args);
     }
 
