@@ -114,133 +114,156 @@
     var ysdk;
     var game;
 
-    console.log("start game3");
     var script = document.createElement("script");
     script.src = loaderUrl;
-    console.log("start game4");
     script.onload = () => {
-        console.log("start gam5");
         createUnityInstance(canvas, config, (progress) => {
             progressBarFull.style.width = 100 * progress + "%";
         }).then((unityInstance) => {
             game = unityInstance;
-            console.log("game staeted");
             loadingBar.style.display = "none";
             fullscreenButton.onclick = () => {
                 unityInstance.SetFullscreen(1);
             };
         }).catch((message) => {
-            console.log("start gam7");
             alert(message);
         });
     };
 
-    YaGames.init().then(_ysdk => {
-        console.log('Yandex SDK initialized');
-        window.ysdk = _ysdk;
-        ysdk = _ysdk;
-        ysdk.features.LoadingAPI?.ready();
-        auth();
-    });
+    function Initialize() {
+        console.log('Initialize from web');
+        
+        try {
+            YaGames.init().then(_ysdk => {
+                window.ysdk = _ysdk;
+                ysdk = _ysdk;
+                ysdk.features.LoadingAPI?.ready();
 
-    function auth() {
-        console.log('start auth');
-        initPlayer().then(_player => {
-            if (_player.getMode() === 'lite') {
-                console.log("Player not logged in");
-                ysdk.auth.openAuthDialog().then(() => {
-                    console.log("Player logged in");
-                    initPlayer().catch(err => {
-                        console.log("Error initializing the Player object: " + err);
-                    });
-                }).catch(() => {
-                    console.log("Player not logged in error.");
+                ysdk.getPlayer().then(_player => {
+                    player = _player;
+
+                    let result = {
+                        "is_player_authorized": player.getMode() !== 'lite',
+                    }
+
+                    let data = JSON.stringify(result);
+                    SendMessageWithArgs('InitializationSuccess', data);
                 });
-            }
-        }).catch(err => {
-            console.log("Error initializing the Player object" + err);
-        });
+            });
+        } catch (e) {
+            SendMessageWithArgs('InitializationError', e.message);
+        }
     }
-    
-    function initPlayer() {
-        console.log('start Player initialize');
-        return ysdk.getPlayer().then(_player => {
-            console.log('Player initialized');
-            player = _player;
-            return player;
-        }).catch(err => {
-            console.log('error get player' + err.message);
-        });
+
+    //либо авторизация пройдет успешно, либо ошибка
+    function AuthDialogOpen() {
+        console.log('AuthDialogOpen from web');
+        
+        try {
+            ysdk.auth.openAuthDialog().then(() => {
+                ysdk.getPlayer().then(_player => {
+                    player = _player;
+
+                    let result = {
+                        "id": player.getUniqueID(),
+                        "name": player.getName(),
+                        "photo": player.getPhoto('medium'),
+                    };
+
+                    let data = JSON.stringify(result);
+
+                    SendMessageWithArgs('AuthenticationSuccess', data);
+                    window.focus();
+                });
+            });
+        } catch (e) {
+            console.error(e);
+            SendMessageWithArgs('AuthenticationError', e.message);
+        } finally {
+            window.focus();
+        }
     }
 
     function SendPlayerInfo() {
+        console.log('SendPlayerInfo from web');
+        
         try {
-            var info = {
+            let info = {
+                "id": player.getUniqueID(),
                 "name": player.getName(),
-                "photo": player.getPhoto(),
+                "photo": player.getPhoto('medium'),
             };
-            var json = JSON.stringify(info);
+            let data = JSON.stringify(info);
 
-            SendMessage("UpdatePlayerInfo", json);
+            SendMessageWithArgs("UpdatePlayerInfo", data);
         } catch (e) {
             console.error(e);
-            SendMessage("UpdatePlayerInfoError", e.message);
+            SendMessageWithArgs("UpdatePlayerInfoError", e.message);
         }
     }
 
     function SendReviewInfo() {
+        console.log('SendReviewInfo from web');
+        
         try {
             ysdk.feedback.canReview()
                 .then(({value, reason}) => {
-                    var info = {
+                    let info = {
                         "is_review_valid": value,
                         "reason": reason,
                     };
-                    var json = JSON.stringify(info);
+                    let data = JSON.stringify(info);
 
-                    SendMessage("UpdateReviewInfo", json);
+                    SendMessageWithArgs("UpdateReviewInfo", data);
                 });
         } catch (e) {
             console.error(e);
-            SendMessage("UpdateReviewInfoError", e.message);
+            SendMessageWithArgs("UpdateReviewInfoError", e.message);
         }
     }
 
-    function DialogReviewOpen() {
-        console.log('dialog review open');
+    function ReviewDialogOpen() {
+        console.log('ReviewDialogOpen from web');
+        
         try {
             ysdk.feedback.requestReview()
                 .then(({feedbackSent}) => {
-                    console.log('feedbackSent ', feedbackSent);
-                    if (feedbackSent) {
-                        SendMessage('DialogReviewClosed', 'true');
-                    } else {
-                        SendMessage('DialogReviewClosed', 'false');
+                    let result = {
+                        "is_review_sent" : feedbackSent,
                     }
+                    var data = JSON.stringify(result);
+                    
+                    SendMessageWithArgs('DialogReviewClosed', data);
                     window.focus();
                 });
         } catch (e) {
-            console.error('CRASH Review: ', e.message);
-            SendMessage('DialogReviewError', e.message);
+            console.error(e);
+            SendMessageWithArgs('DialogReviewError', e.message);
             window.focus();
         }
     }
-    
+
     function SendPlayerData() {
-        console.log('SendPlayerData');
+        console.log('SendPlayerData from web');
+        
         try {
             player.getData().then(data => {
-                SendMessage('UpdatePlayerData', JSON.stringify(data));
+                SendMessageWithArgs('UpdatePlayerData', JSON.stringify(data));
             })
-        }catch (e){
+        } catch (e) {
             console.error(e);
-            SendMessage('UpdatePlayerDataError', e.message);
+            SendMessageWithArgs('UpdatePlayerDataError', e.message);
         }
     }
-    
-    function SendMessage(methodName, args) {
-        console.log('send message to ' + methodName + ': ' + args)
+
+    function SendMessageWithArgs(methodName, args) {
+        console.log('send message to ' + methodName + ': ' + args);
         game.SendMessage("ya_api", methodName, args);
+    }
+
+    function SendMessage(methodName) {
+        console.log('send message to ' + methodName);
+        game.SendMessage("ya_api", methodName);
     }
 
     document.body.appendChild(script);

@@ -3,15 +3,15 @@ using Newtonsoft.Json;
 
 namespace RatYandex.Runtime
 {
-    public class PlayerInfoRequest: ARequest<PlayerInfo>
+    public class PlayerInfoRequest : ARequest<PlayerInfoResponse>
     {
         private readonly YaApiBridge _bridge;
 
-        public PlayerInfoRequest(YaApiBridge bridge): base(bridge)
+        public PlayerInfoRequest(YaApiBridge bridge) : base(bridge)
         {
             _bridge = bridge;
         }
-        
+
         protected override Action Request => _bridge.GetPlayerInfo;
         protected override Action<string> Response
         {
@@ -23,6 +23,7 @@ namespace RatYandex.Runtime
             get => _bridge.OnPlayerInfoError;
             set => _bridge.OnPlayerInfoError = value;
         }
-        protected override PlayerInfo Convert(string data) => JsonConvert.DeserializeObject<PlayerInfo>(data);
+        protected override PlayerInfoResponse Convert(string data) =>
+            JsonConvert.DeserializeObject<PlayerInfoResponse>(data);
     }
 }

@@ -3,7 +3,7 @@ using Newtonsoft.Json;
 
 namespace RatYandex.Runtime
 {
-    public class ReviewDialogRequest : ARequest<bool>
+    public class ReviewDialogRequest : ARequest<ReviewDialogResponse>
     {
         private readonly YaApiBridge _bridge;
 
@@ -12,7 +12,7 @@ namespace RatYandex.Runtime
             _bridge = bridge;
         }
 
-        protected override Action Request => _bridge.DialogReviewOpen;
+        protected override Action Request => _bridge.ReviewDialogOpen;
         protected override Action<string> Response
         {
             get => _bridge.OnDialogReviewClosed;
@@ -23,6 +23,6 @@ namespace RatYandex.Runtime
             get => _bridge.OnDialogReviewError;
             set => _bridge.OnDialogReviewError = value;
         }
-        protected override bool Convert(string data) => JsonConvert.DeserializeObject<bool>(data);
+        protected override ReviewDialogResponse Convert(string data) => JsonConvert.DeserializeObject<ReviewDialogResponse>(data);
     }
 }

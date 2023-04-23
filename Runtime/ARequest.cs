@@ -19,7 +19,7 @@ namespace RatYandex.Runtime
         protected ARequest(ICoroutine bridge)
         {
             _coroutine = bridge;
-            _waitResponse = new(() => _hasResponse);
+            _waitResponse = new(CheckResponse);
         }
 
         public void Send(Action<T> onSuccess, Action<string> onError)
@@ -39,16 +39,15 @@ namespace RatYandex.Runtime
             }
 
             _hasRequest = true;
+            _hasResponse = false;
             
             Response += OnSuccess;
             Error += OnError;
-
-            Request.Invoke();
             
-            _hasResponse = false;
+            Request.Invoke();
 
             yield return _waitResponse;
-
+            
             if (_isSuccess)
             {
                 var result = Convert(_data);
@@ -63,6 +62,8 @@ namespace RatYandex.Runtime
             }
         }
 
+        private bool CheckResponse() => _hasResponse;
+
         private void OnSuccess(string data)
         {
             _hasResponse = true;
@@ -72,9 +73,9 @@ namespace RatYandex.Runtime
 
         private void OnError(string message)
         {
-            _error = message;
             _hasResponse = true;
             _isSuccess = false;
+            _error = message;
         }
 
         private void Reset()

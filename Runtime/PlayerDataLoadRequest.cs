@@ -1,8 +1,9 @@
 using System;
+using Newtonsoft.Json;
 
 namespace RatYandex.Runtime
 {
-    public class PlayerDataLoadRequest : ARequest<string>
+    public class PlayerDataLoadRequest : ARequest<PlayerDataLoadResponse>
     {
         private readonly YaApiBridge _bridge;
 
@@ -22,6 +23,8 @@ namespace RatYandex.Runtime
             get => _bridge.OnPlayerDataError;
             set => _bridge.OnPlayerDataError = value;
         }
-        protected override string Convert(string data) => data;
+
+        protected override PlayerDataLoadResponse Convert(string data) =>
+            JsonConvert.DeserializeObject<PlayerDataLoadResponse>(data);
     }
 }
