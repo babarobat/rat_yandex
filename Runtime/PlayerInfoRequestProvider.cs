@@ -1,71 +1,28 @@
 using System;
-using System.Collections;
 using Newtonsoft.Json;
-using UnityEngine;
 
 namespace RatYandex.Runtime
 {
-    public class PlayerInfoRequestProvider
+    public class PlayerInfoRequest: ARequest<PlayerInfo>
     {
         private readonly YaApiBridge _bridge;
-        private readonly WaitUntil _waitResponse;
-        
-        private bool _hasResponse;
-        private bool _isSuccess;
-        private string _data;
 
-        public PlayerInfoRequestProvider(YaApiBridge bridge)
+        public PlayerInfoRequest(YaApiBridge bridge): base(bridge)
         {
             _bridge = bridge;
-
-            _bridge.OnPlayerInfoReceived = OnSuccess;
-            _bridge.OnPlayerInfoError = OnError;
-            
-            _waitResponse = new(() => _hasResponse);
         }
-
-        public void Get(Action<PlayerInfo> onSuccess, Action onError)
+        
+        protected override Action Request => _bridge.GetPlayerInfo;
+        protected override Action<string> Response
         {
-            _bridge.StartCoroutine(GetInternal(onSuccess, onError));
+            get => _bridge.OnPlayerInfoReceived;
+            set => _bridge.OnPlayerInfoReceived = value;
         }
 
-        private IEnumerator GetInternal(Action<PlayerInfo> onSuccess, Action onError)
-        {
-            _bridge.GetPlayerInfo();
-            
-            yield return _waitResponse;
-            
-            if (_isSuccess)
-            {
-                var result = JsonConvert.DeserializeObject<PlayerInfo>(_data);
-                Clear();
-                onSuccess?.Invoke(result);
-            }
-            else
-            {
-                Clear();
-                onError?.Invoke();
-            }
+        protected override Action<string> Error {
+            get => _bridge.OnPlayerInfoError;
+            set => _bridge.OnPlayerInfoError = value;
         }
-
-        private void OnSuccess(string data)
-        {
-            _hasResponse = true;
-            _isSuccess = true;
-            _data = data;
-        }
-
-        private void OnError()
-        {
-            _hasResponse = true;
-            _isSuccess = false;
-        }
-
-        private void Clear()
-        {
-            _hasResponse = default;
-            _isSuccess = default;
-            _data = default;
-        }
+        protected override PlayerInfo Convert(string data) => JsonConvert.DeserializeObject<PlayerInfo>(data);
     }
 }

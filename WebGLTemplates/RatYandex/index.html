@@ -161,9 +161,9 @@
             console.log("Error initializing the Player object" + err);
         });
     }
-
+    
     function initPlayer() {
-        console.log('start Player initializ');
+        console.log('start Player initialize');
         return ysdk.getPlayer().then(_player => {
             console.log('Player initialized');
             player = _player;
@@ -184,7 +184,7 @@
             SendMessage("UpdatePlayerInfo", json);
         } catch (e) {
             console.error(e);
-            SendMessage("UpdatePlayerInfoError");
+            SendMessage("UpdatePlayerInfoError", e.message);
         }
     }
 
@@ -202,7 +202,7 @@
                 });
         } catch (e) {
             console.error(e);
-            SendMessage("UpdateReviewInfoError");
+            SendMessage("UpdateReviewInfoError", e.message);
         }
     }
 
@@ -221,10 +221,23 @@
                 });
         } catch (e) {
             console.error('CRASH Review: ', e.message);
+            SendMessage('DialogReviewError', e.message);
             window.focus();
         }
     }
-
+    
+    function SendPlayerData() {
+        console.log('SendPlayerData');
+        try {
+            player.getData().then(data => {
+                SendMessage('UpdatePlayerData', JSON.stringify(data));
+            })
+        }catch (e){
+            console.error(e);
+            SendMessage('UpdatePlayerDataError', e.message);
+        }
+    }
+    
     function SendMessage(methodName, args) {
         console.log('send message to ' + methodName + ': ' + args)
         game.SendMessage("ya_api", methodName, args);
