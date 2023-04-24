@@ -132,7 +132,7 @@
 
     function Initialize() {
         console.log('Initialize from web');
-        
+
         try {
             YaGames.init().then(_ysdk => {
                 window.ysdk = _ysdk;
@@ -151,14 +151,15 @@
                 });
             });
         } catch (e) {
-            SendMessageWithArgs('InitializationError', e.message);
+            console.error(e)
+            SendError('InitializationError', e.message);
         }
     }
 
     //либо авторизация пройдет успешно, либо ошибка
     function AuthDialogOpen() {
         console.log('AuthDialogOpen from web');
-        
+
         try {
             ysdk.auth.openAuthDialog().then(() => {
                 ysdk.getPlayer().then(_player => {
@@ -178,7 +179,7 @@
             });
         } catch (e) {
             console.error(e);
-            SendMessageWithArgs('AuthenticationError', e.message);
+            SendError('AuthenticationError', e.message);
         } finally {
             window.focus();
         }
@@ -186,7 +187,7 @@
 
     function SendPlayerInfo() {
         console.log('SendPlayerInfo from web');
-        
+
         try {
             let info = {
                 "id": player.getUniqueID(),
@@ -198,13 +199,13 @@
             SendMessageWithArgs("UpdatePlayerInfo", data);
         } catch (e) {
             console.error(e);
-            SendMessageWithArgs("UpdatePlayerInfoError", e.message);
+            SendError("UpdatePlayerInfoError", e.message);
         }
     }
 
     function SendReviewInfo() {
         console.log('SendReviewInfo from web');
-        
+
         try {
             ysdk.feedback.canReview()
                 .then(({value, reason}) => {
@@ -218,34 +219,42 @@
                 });
         } catch (e) {
             console.error(e);
-            SendMessageWithArgs("UpdateReviewInfoError", e.message);
+            SendError("UpdateReviewInfoError", e.message);
         }
     }
 
     function ReviewDialogOpen() {
         console.log('ReviewDialogOpen from web');
-        
+
         try {
-            ysdk.feedback.requestReview()
-                .then(({feedbackSent}) => {
-                    let result = {
-                        "is_review_sent" : feedbackSent,
+            ysdk.feedback.canReview()
+                .then(({value, reason}) => {
+                    if (!value) {
+                        SendError('DialogReviewError', "dialog show unavailable, reason: " + reason);
+                        window.focus();
+                        return;
                     }
-                    var data = JSON.stringify(result);
-                    
-                    SendMessageWithArgs('DialogReviewClosed', data);
-                    window.focus();
+                    ysdk.feedback.requestReview()
+                        .then(({feedbackSent}) => {
+                            let result = {
+                                "is_review_sent": feedbackSent,
+                            }
+                            var data = JSON.stringify(result);
+
+                            SendMessageWithArgs('DialogReviewClosed', data);
+                            window.focus();
+                        });
                 });
+          
         } catch (e) {
             console.error(e);
-            SendMessageWithArgs('DialogReviewError', e.message);
+            SendError('DialogReviewError', e);
             window.focus();
         }
     }
 
     function SendPlayerData() {
         console.log('SendPlayerData from web');
-        
         try {
             player.getData().then(data => {
                 SendMessageWithArgs('UpdatePlayerData', JSON.stringify(data));
@@ -264,6 +273,14 @@
     function SendMessage(methodName) {
         console.log('send message to ' + methodName);
         game.SendMessage("ya_api", methodName);
+    }
+
+    function SendError(clientMethodName, message){
+        let error = {
+            "message" : message,
+        };
+        let data = JSON.stringify(error);
+        SendMessageWithArgs(clientMethodName, data);
     }
 
     document.body.appendChild(script);
