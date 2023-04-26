@@ -31,6 +31,10 @@ mergeInto(LibraryManager.library, {
         SendPlayerData();
     },
 
+    _SetPlayerData: function (data) {
+        SavePlayerData(UTF8ToString(data));
+    },
+
     HelloString: function (str) {
         window.alert(UTF8ToString(str));
     },

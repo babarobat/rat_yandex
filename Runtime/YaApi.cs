@@ -31,5 +31,6 @@ namespace RatYandex.Runtime
 
         public void WebWindowAlert(string message) => _bridge.WebWindowAlert(message);
         public void WebConsoleLog(string message) => _bridge.WebConsoleLog(message);
+        public void PlayerDataSave(string data) => _bridge.SetPlayerData(data);
     }
 }

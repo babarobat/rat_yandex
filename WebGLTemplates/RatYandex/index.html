@@ -256,9 +256,31 @@
     function SendPlayerData() {
         console.log('SendPlayerData from web');
         try {
-            player.getData().then(data => {
-                SendMessageWithArgs('UpdatePlayerData', JSON.stringify(data));
+            player.getData(["saves"]).then(data => {
+                if (data.saves){
+                    var result = {
+                        "data" : data.saves
+                    }
+                    var json = JSON.stringify(result);
+                    SendMessageWithArgs('UpdatePlayerData', json);
+                }else{
+                    SendMessageWithArgs('UpdatePlayerData', "");
+                }
             })
+        } catch (e) {
+            console.error(e);
+            SendMessageWithArgs('UpdatePlayerDataError', e.message);
+        }
+    }
+
+    function SavePlayerData(data) {
+        console.log('SavePlayerData from web' + data);
+        try {
+            var s = {
+                "saves": data,
+            };
+            console.log('SavePlayerData from web' + s);
+            player.setData(s);
         } catch (e) {
             console.error(e);
             SendMessageWithArgs('UpdatePlayerDataError', e.message);

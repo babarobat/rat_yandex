@@ -15,6 +15,7 @@ namespace RatYandex.Runtime
         [DllImport("__Internal")] private static extern void _GetPlayerInfo();
         [DllImport("__Internal")] private static extern void _GetReviewInfo();
         [DllImport("__Internal")] private static extern void _GetPlayerData();
+        [DllImport("__Internal")] private static extern void _SetPlayerData(string data);
 
         public Action<string> OnInitializationSuccess;
         public Action<string> OnInitializationError;
@@ -36,6 +37,7 @@ namespace RatYandex.Runtime
         public void GetPlayerInfo() => _GetPlayerInfo();
         public void GetReviewInfo() => _GetReviewInfo();
         public void GetPlayerData() => _GetPlayerData();
+        public void SetPlayerData(string data) => _SetPlayerData(data);
 
         [UsedImplicitly] public void InitializationSuccess(string data) => OnInitializationSuccess?.Invoke(data);
         [UsedImplicitly] public void InitializationError(string data) => OnInitializationError?.Invoke(data);
