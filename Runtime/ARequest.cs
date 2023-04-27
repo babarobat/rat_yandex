@@ -71,15 +71,14 @@ namespace RatYandex.Runtime
         }
     }
     
-    public abstract class ARequestWithPayload<TPayload ,TResult, TError>
+    public abstract class ARequestWithPayloadEmptyResult<TPayload, TError>
     {
         public RequestStatus Status { get; private set; }
-        public TResult Result { get; private set; }
         public TError Error { get; private set; }
         
         private readonly WaitUntil _waitResponse;
         
-        protected ARequestWithPayload()
+        protected ARequestWithPayloadEmptyResult()
         {
             _waitResponse = new(IsCompleted);
         }
@@ -113,16 +112,14 @@ namespace RatYandex.Runtime
         }
 
         protected abstract Action<TPayload> Request { get; }
-        protected abstract Action<string> ResponseProvider { get; set; }
+        protected abstract Action ResponseProvider { get; set; }
         protected abstract Action<string> ErrorProvider { get; set; }
-        protected abstract TResult ParseResult(string data);
         protected abstract TError ParseError(string data);
 
         private bool IsCompleted() => Status is RequestStatus.Canceled or RequestStatus.Success or RequestStatus.Error;
 
-        private void OnSuccess(string data)
+        private void OnSuccess()
         {
-            Result = ParseResult(data);
             Status = RequestStatus.Success;
         }
 

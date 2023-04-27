@@ -14,6 +14,7 @@ namespace RatYandex.Runtime
         public ReviewInfoRequest ReviewInfoRequest { get; }
         public ReviewDialogRequest ReviewDialogRequest { get; }
         public PlayerDataLoadRequest PlayerDataLoadRequest { get; }
+        public PlayerDataSaveRequest PlayerDataSaveRequest { get; }
 
         public YaApi()
         {
@@ -27,10 +28,10 @@ namespace RatYandex.Runtime
             ReviewInfoRequest = new(_bridge);
             ReviewDialogRequest = new(_bridge);
             PlayerDataLoadRequest = new(_bridge);
+            PlayerDataSaveRequest = new(_bridge);
         }
 
         public void WebWindowAlert(string message) => _bridge.WebWindowAlert(message);
         public void WebConsoleLog(string message) => _bridge.WebConsoleLog(message);
-        public void PlayerDataSave(string data) => _bridge.SetPlayerData(data);
     }
 }

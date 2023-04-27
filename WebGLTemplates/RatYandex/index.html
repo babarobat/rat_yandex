@@ -245,7 +245,7 @@
                             window.focus();
                         });
                 });
-          
+
         } catch (e) {
             console.error(e);
             SendError('DialogReviewError', e);
@@ -257,13 +257,14 @@
         console.log('SendPlayerData from web');
         try {
             player.getData(["saves"]).then(data => {
-                if (data.saves){
-                    var result = {
-                        "data" : data.saves
+                if (data.saves) {
+                    let result = {
+                        "data": data.saves
                     }
-                    var json = JSON.stringify(result);
+                    let json = JSON.stringify(result);
+
                     SendMessageWithArgs('UpdatePlayerData', json);
-                }else{
+                } else {
                     SendMessageWithArgs('UpdatePlayerData', "");
                 }
             })
@@ -276,14 +277,17 @@
     function SavePlayerData(data) {
         console.log('SavePlayerData from web' + data);
         try {
-            var s = {
+            let saves = {
                 "saves": data,
             };
-            console.log('SavePlayerData from web' + s);
-            player.setData(s);
+
+            player.setData(saves).then(() => {
+                SendMessage('SavePlayerDataSuccess');
+            });
+
         } catch (e) {
             console.error(e);
-            SendMessageWithArgs('UpdatePlayerDataError', e.message);
+            SendMessageWithArgs('SavePlayerDataError', e.message);
         }
     }
 
@@ -297,9 +301,9 @@
         game.SendMessage("ya_api", methodName);
     }
 
-    function SendError(clientMethodName, message){
+    function SendError(clientMethodName, message) {
         let error = {
-            "message" : message,
+            "message": message,
         };
         let data = JSON.stringify(error);
         SendMessageWithArgs(clientMethodName, data);

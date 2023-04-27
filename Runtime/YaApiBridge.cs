@@ -29,6 +29,8 @@ namespace RatYandex.Runtime
         public Action<string> OnDialogReviewError;
         public Action<string> OnPlayerDataReceived;
         public Action<string> OnPlayerDataError;
+        public Action OnPlayerDataSaved;
+        public Action<string> OnPlayerDataSaveError;
         public void WebWindowAlert(string message) => _WebWindowAlert(message);
         public void WebConsoleLog(string message) => _WebConsoleLog(message);
         public void Initialize() => _Initialize();
@@ -51,5 +53,7 @@ namespace RatYandex.Runtime
         [UsedImplicitly] public void DialogReviewError(string data) => OnDialogReviewError?.Invoke(data);
         [UsedImplicitly] public void UpdatePlayerData(string data) => OnPlayerDataReceived?.Invoke(data);
         [UsedImplicitly] public void UpdatePlayerDataError(string data) => OnPlayerDataError?.Invoke(data);
+        [UsedImplicitly] public void SavePlayerDataSuccess() => OnPlayerDataSaved?.Invoke();
+        [UsedImplicitly] public void SavePlayerDataError(string data) => OnPlayerDataSaveError?.Invoke(data);
     }
 }
