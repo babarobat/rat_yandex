@@ -1,4 +1,3 @@
-using System;
 using UnityEngine;
 using Object = UnityEngine.Object;
 
@@ -15,6 +14,7 @@ namespace RatYandex.Runtime
         public ReviewDialogRequest ReviewDialogRequest { get; }
         public PlayerDataLoadRequest PlayerDataLoadRequest { get; }
         public PlayerDataSaveRequest PlayerDataSaveRequest { get; }
+        public InterstitialShowRequest InterstitialShowRequest { get; }
 
         public YaApi()
         {
@@ -29,6 +29,7 @@ namespace RatYandex.Runtime
             ReviewDialogRequest = new(_bridge);
             PlayerDataLoadRequest = new(_bridge);
             PlayerDataSaveRequest = new(_bridge);
+            InterstitialShowRequest = new(_bridge);
         }
 
         public void WebWindowAlert(string message) => _bridge.WebWindowAlert(message);

@@ -291,6 +291,39 @@
         }
     }
 
+    function ShowInterstitial() {
+        try {
+            window.ysdk.adv.showFullscreenAdv(
+                {
+                    callbacks: {
+                        onOpen: () => {
+                            console.log('start show interstitial')
+                            SendMessage('InterstitialShowStart');
+                        },
+                        onClose: (wasShown) => {
+
+                            console.log('close interstitial was shown: ' + wasShown);
+                            
+                            let result = {
+                              'was_shown' : wasShown,  
+                            };
+                            let data = JSON.stringify(result);
+                            
+                            SendMessageWithArgs('InterstitialShowStart', data);
+                            window.focus();
+                        },
+                        onError: (error) => {
+                            SendError('InterstitialShowStartError', error.message);
+                            console.error('Error Fullscreen Ad.', error);
+                            window.focus();
+                        }
+                    }
+                });
+        } catch (e) {
+            console.error('CRASH FullAd Show: ', e.message);
+        }
+    }
+
     function SendMessageWithArgs(methodName, args) {
         console.log('send message to ' + methodName + ': ' + args);
         game.SendMessage("ya_api", methodName, args);

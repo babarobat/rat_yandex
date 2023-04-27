@@ -16,6 +16,7 @@ namespace RatYandex.Runtime
         [DllImport("__Internal")] private static extern void _GetReviewInfo();
         [DllImport("__Internal")] private static extern void _GetPlayerData();
         [DllImport("__Internal")] private static extern void _SetPlayerData(string data);
+        [DllImport("__Internal")] private static extern void _ShowInterstitial();
 
         public Action<string> OnInitializationSuccess;
         public Action<string> OnInitializationError;
@@ -31,6 +32,8 @@ namespace RatYandex.Runtime
         public Action<string> OnPlayerDataError;
         public Action OnPlayerDataSaved;
         public Action<string> OnPlayerDataSaveError;
+        public Action<string> OnAdsInterstitialShow;
+        public Action<string> OnAdsInterstitialShowError;
         public void WebWindowAlert(string message) => _WebWindowAlert(message);
         public void WebConsoleLog(string message) => _WebConsoleLog(message);
         public void Initialize() => _Initialize();
@@ -40,6 +43,7 @@ namespace RatYandex.Runtime
         public void GetReviewInfo() => _GetReviewInfo();
         public void GetPlayerData() => _GetPlayerData();
         public void SetPlayerData(string data) => _SetPlayerData(data);
+        public void ShowInterstitial() => _ShowInterstitial();
 
         [UsedImplicitly] public void InitializationSuccess(string data) => OnInitializationSuccess?.Invoke(data);
         [UsedImplicitly] public void InitializationError(string data) => OnInitializationError?.Invoke(data);
@@ -55,5 +59,7 @@ namespace RatYandex.Runtime
         [UsedImplicitly] public void UpdatePlayerDataError(string data) => OnPlayerDataError?.Invoke(data);
         [UsedImplicitly] public void SavePlayerDataSuccess() => OnPlayerDataSaved?.Invoke();
         [UsedImplicitly] public void SavePlayerDataError(string data) => OnPlayerDataSaveError?.Invoke(data);
+        [UsedImplicitly] public void InterstitialShowStart(string data) => OnAdsInterstitialShow?.Invoke(data);
+        [UsedImplicitly] public void InterstitialShowStartError(string data) => OnAdsInterstitialShowError?.Invoke(data);
     }
 }
