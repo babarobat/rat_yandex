@@ -32,7 +32,7 @@ namespace RatYandex.Runtime
         public Action<string> OnPlayerDataError;
         public Action OnPlayerDataSaved;
         public Action<string> OnPlayerDataSaveError;
-        public Action<string> OnAdsInterstitialShow;
+        public Action<string> OnAdsInterstitialSuccess;
         public Action<string> OnAdsInterstitialShowError;
         public void WebWindowAlert(string message) => _WebWindowAlert(message);
         public void WebConsoleLog(string message) => _WebConsoleLog(message);
@@ -59,7 +59,7 @@ namespace RatYandex.Runtime
         [UsedImplicitly] public void UpdatePlayerDataError(string data) => OnPlayerDataError?.Invoke(data);
         [UsedImplicitly] public void SavePlayerDataSuccess() => OnPlayerDataSaved?.Invoke();
         [UsedImplicitly] public void SavePlayerDataError(string data) => OnPlayerDataSaveError?.Invoke(data);
-        [UsedImplicitly] public void InterstitialShowStart(string data) => OnAdsInterstitialShow?.Invoke(data);
+        [UsedImplicitly] public void InterstitialShowSuccess(string data) => OnAdsInterstitialSuccess?.Invoke(data);
         [UsedImplicitly] public void InterstitialShowStartError(string data) => OnAdsInterstitialShowError?.Invoke(data);
     }
 }

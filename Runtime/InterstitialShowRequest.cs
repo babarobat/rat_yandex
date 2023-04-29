@@ -16,8 +16,8 @@ namespace RatYandex.Runtime
 
         protected override Action<string> ResponseProvider
         {
-            get => _bridge.OnAdsInterstitialShow;
-            set => _bridge.OnAdsInterstitialShow = value;
+            get => _bridge.OnAdsInterstitialSuccess;
+            set => _bridge.OnAdsInterstitialSuccess = value;
         }
 
         protected override Action<string> ErrorProvider

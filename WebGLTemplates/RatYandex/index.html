@@ -297,8 +297,7 @@
                 {
                     callbacks: {
                         onOpen: () => {
-                            console.log('start show interstitial')
-                            SendMessage('InterstitialShowStart');
+                            
                         },
                         onClose: (wasShown) => {
 
@@ -309,7 +308,7 @@
                             };
                             let data = JSON.stringify(result);
                             
-                            SendMessageWithArgs('InterstitialShowStart', data);
+                            SendMessageWithArgs('InterstitialShowSuccess', data);
                             window.focus();
                         },
                         onError: (error) => {
