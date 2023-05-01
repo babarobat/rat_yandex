@@ -9,8 +9,8 @@
     <script src="https://yandex.ru/games/sdk/v2"></script>
 </head>
 <body>
-<div id="unity-container" style = "position: absolute; width: 100%; height: 100%; left: 0%; top: 0%;">
-    <canvas id="unity-canvas" style = "position: absolute; width: 100%; height: 100%;"></canvas>
+<div id="unity-container" style="position: absolute; width: 100%; height: 100%; left: 0%; top: 0%;">
+    <canvas id="unity-canvas" style="position: absolute; width: 100%; height: 100%;"></canvas>
     <div id="unity-loading-bar">
         <div id="unity-logo"></div>
         <div id="unity-progress-bar-empty">
@@ -105,14 +105,15 @@
     } else {
         // Desktop style: Render the game canvas in a window that can be maximized to fullscreen:
 
-        canvas.style.width = "960px";
-        canvas.style.height = "600px";
+        //canvas.style.width = "960px";
+        //canvas.style.height = "600px";
     }
 
     loadingBar.style.display = "block";
     var player;
     var ysdk;
     var game;
+    var payments;
 
     var script = document.createElement("script");
     script.src = loaderUrl;
@@ -153,6 +154,28 @@
         } catch (e) {
             console.error(e)
             SendError('InitializationError', e.message);
+        }
+    }
+
+    function InitializePayments() {
+        console.log('InitializePayments from web');
+        try {
+            ysdk.getPayments({signed: true})
+                .then(_payments => {
+                    payments = _payments;
+
+                    payments.getPurchases().then(purchases => {
+                        var result = {
+                            "purchases": purchases,
+                        }
+                        var data = JSON.stringify(result);
+
+                        SendMessage('InitializePaymentsSuccess', data);
+                    });
+                });
+        } catch (e) {
+            console.error(e)
+            SendError('InitializePaymentsError', e.message);
         }
     }
 
@@ -297,17 +320,17 @@
                 {
                     callbacks: {
                         onOpen: () => {
-                            
+
                         },
                         onClose: (wasShown) => {
 
                             console.log('close interstitial was shown: ' + wasShown);
-                            
+
                             let result = {
-                              'was_shown' : wasShown,  
+                                'was_shown': wasShown,
                             };
                             let data = JSON.stringify(result);
-                            
+
                             SendMessageWithArgs('InterstitialShowSuccess', data);
                             window.focus();
                         },
@@ -320,6 +343,39 @@
                 });
         } catch (e) {
             console.error('CRASH FullAd Show: ', e.message);
+        }
+    }
+
+    function ShowRewarded() {
+        try {
+            let revarded = false;
+            ysdk.adv.showRewardedVideo({
+                callbacks: {
+                    onOpen: () => {
+                        console.log('Video ad open.');
+                    },
+                    onRewarded: () => {
+                        console.log('Rewarded!');
+                        revarded = true;
+                    },
+                    onClose: () => {
+                        console.log('Video ad closed.');
+                        let result = {
+                            "is_rewarded" :revarded,
+                        }
+                        
+                        let data = JSON.stringify(result);
+                        SendMessageWithArgs('RewardedShowSuccess', data);
+                    },
+                    onError: (e) => {
+                        console.log('Error while open video ad:', e);
+                        SendError('RewardedShowError', e.message);
+                    }
+                }
+            });
+        } catch (e) {
+            console.log('Error while open video ad:', e);
+            SendError('RewardedShowError', e.message);
         }
     }
 
