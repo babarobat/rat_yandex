@@ -11,6 +11,10 @@ mergeInto(LibraryManager.library, {
         Initialize();
     },
 
+    _InitializePayments: function () {
+        InitializePayments();
+    },
+
     _GetReviewInfo: function () {
         SendReviewInfo();
     },

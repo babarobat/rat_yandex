@@ -16,6 +16,7 @@ namespace RatYandex.Runtime
         public PlayerDataSaveRequest PlayerDataSaveRequest { get; }
         public InterstitialShowRequest InterstitialShowRequest { get; }
         public RewardedShowRequest RewardedShowRequest { get; }
+        public InitializePaymentsRequest InitializePaymentsRequest { get; }
 
         public YaApi()
         {
@@ -32,6 +33,7 @@ namespace RatYandex.Runtime
             PlayerDataSaveRequest = new(_bridge);
             InterstitialShowRequest = new(_bridge);
             RewardedShowRequest = new(_bridge);
+            InitializePaymentsRequest = new(_bridge);
         }
 
         public void WebWindowAlert(string message) => _bridge.WebWindowAlert(message);

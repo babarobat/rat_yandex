@@ -165,12 +165,12 @@
                     payments = _payments;
 
                     payments.getPurchases().then(purchases => {
-                        var result = {
-                            "purchases": purchases,
+                        let result = {
+                            "purchases": JSON.stringify(purchases),
                         }
-                        var data = JSON.stringify(result);
+                        let data = JSON.stringify(result);
 
-                        SendMessage('InitializePaymentsSuccess', data);
+                        SendMessageWithArgs('InitializePaymentsSuccess', data);
                     });
                 });
         } catch (e) {

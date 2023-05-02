@@ -18,6 +18,7 @@ namespace RatYandex.Runtime
         [DllImport("__Internal")] private static extern void _SetPlayerData(string data);
         [DllImport("__Internal")] private static extern void _ShowInterstitial();
         [DllImport("__Internal")] private static extern void _ShowRewarded();
+        [DllImport("__Internal")] private static extern void _InitializePayments();
 
         public Action<string> OnInitializationSuccess;
         public Action<string> OnInitializationError;
@@ -37,6 +38,8 @@ namespace RatYandex.Runtime
         public Action<string> OnAdsInterstitialShowError;
         public Action<string> OnRewardedShowSuccess;
         public Action<string> OnRewardedShowError;
+        public Action<string> OnInitializePaymentsSuccess;
+        public Action<string> OnInitializePaymentsError;
         public void WebWindowAlert(string message) => _WebWindowAlert(message);
         public void WebConsoleLog(string message) => _WebConsoleLog(message);
         public void Initialize() => _Initialize();
@@ -48,6 +51,7 @@ namespace RatYandex.Runtime
         public void SetPlayerData(string data) => _SetPlayerData(data);
         public void ShowInterstitial() => _ShowInterstitial();
         public void ShowRewarded() => _ShowRewarded();
+        public void InitializePayments() => _InitializePayments();
 
         [UsedImplicitly] public void InitializationSuccess(string data) => OnInitializationSuccess?.Invoke(data);
         [UsedImplicitly] public void InitializationError(string data) => OnInitializationError?.Invoke(data);
@@ -67,5 +71,8 @@ namespace RatYandex.Runtime
         [UsedImplicitly] public void InterstitialShowStartError(string data) => OnAdsInterstitialShowError?.Invoke(data);
         [UsedImplicitly] public void RewardedShowSuccess(string data) => OnRewardedShowSuccess?.Invoke(data);
         [UsedImplicitly] public void RewardedShowError(string data) => OnRewardedShowError?.Invoke(data);
+        [UsedImplicitly] public void InitializePaymentsSuccess(string data) => OnInitializePaymentsSuccess?.Invoke(data);
+        [UsedImplicitly] public void InitializePaymentsError(string data) => OnInitializePaymentsError?.Invoke(data);
+
     }
 }
