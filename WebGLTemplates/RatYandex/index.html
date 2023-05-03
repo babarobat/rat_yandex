@@ -131,48 +131,51 @@
         });
     };
 
-    function Initialize() {
+    async function Initialize() {
         console.log('Initialize from web');
 
         try {
-            YaGames.init().then(_ysdk => {
-                window.ysdk = _ysdk;
-                ysdk = _ysdk;
-                ysdk.features.LoadingAPI?.ready();
+            ysdk = await YaGames.init();
 
-                ysdk.getPlayer().then(_player => {
-                    player = _player;
+            window.ysdk = ysdk;
+            ysdk.features.LoadingAPI?.ready();
 
-                    let result = {
-                        "is_player_authorized": player.getMode() !== 'lite',
-                    }
+            player = await ysdk.getPlayer();
 
-                    let data = JSON.stringify(result);
-                    SendMessageWithArgs('InitializationSuccess', data);
-                });
-            });
+            const isPlayerAuthorized = player.getMode() !== 'lite';
+
+            let result = {
+                "is_player_authorized": isPlayerAuthorized,
+            }
+
+            let data = JSON.stringify(result);
+            SendMessageWithArgs('InitializationSuccess', data);
+
         } catch (e) {
             console.error(e)
             SendError('InitializationError', e.message);
         }
     }
 
-    function InitializePayments() {
+    async function InitializePayments() {
         console.log('InitializePayments from web');
+
         try {
-            ysdk.getPayments({signed: true})
-                .then(_payments => {
-                    payments = _payments;
+            payments = await ysdk.getPayments({signed: true});
+            console.log('payments initialized');
+            const purchases = await payments.getPurchases();
+            console.log('purchases get success');
+            const catalog = await payments.getCatalog();
+            console.log('catalog get success');
 
-                    payments.getPurchases().then(purchases => {
-                        let result = {
-                            "purchases": JSON.stringify(purchases),
-                        }
-                        let data = JSON.stringify(result);
+            let result = {
+                "purchases": JSON.stringify(purchases),
+                "catalog": JSON.stringify(catalog),
+            }
+            let data = JSON.stringify(result);
 
-                        SendMessageWithArgs('InitializePaymentsSuccess', data);
-                    });
-                });
+            SendMessageWithArgs('InitializePaymentsSuccess', data);
+
         } catch (e) {
             console.error(e)
             SendError('InitializePaymentsError', e.message);
@@ -180,26 +183,24 @@
     }
 
     //либо авторизация пройдет успешно, либо ошибка
-    function AuthDialogOpen() {
+    async function AuthDialogOpen() {
         console.log('AuthDialogOpen from web');
 
         try {
-            ysdk.auth.openAuthDialog().then(() => {
-                ysdk.getPlayer().then(_player => {
-                    player = _player;
+            await sdk.auth.openAuthDialog();
 
-                    let result = {
-                        "id": player.getUniqueID(),
-                        "name": player.getName(),
-                        "photo": player.getPhoto('medium'),
-                    };
+            player = await ysdk.getPlayer();
 
-                    let data = JSON.stringify(result);
+            let result = {
+                "id": player.getUniqueID(),
+                "name": player.getName(),
+                "photo": player.getPhoto('medium'),
+            };
 
-                    SendMessageWithArgs('AuthenticationSuccess', data);
-                    window.focus();
-                });
-            });
+            let data = JSON.stringify(result);
+
+            SendMessageWithArgs('AuthenticationSuccess', data);
+
         } catch (e) {
             console.error(e);
             SendError('AuthenticationError', e.message);
@@ -226,52 +227,52 @@
         }
     }
 
-    function SendReviewInfo() {
+    async function SendReviewInfo() {
         console.log('SendReviewInfo from web');
 
         try {
-            ysdk.feedback.canReview()
-                .then(({value, reason}) => {
-                    let info = {
-                        "is_review_valid": value,
-                        "reason": reason,
-                    };
-                    let data = JSON.stringify(info);
+            var canReview = await ysdk.feedback.canReview();
+            var isReviewValid = canReview.value;
+            var reason = canReview.reason;
 
-                    SendMessageWithArgs("UpdateReviewInfo", data);
-                });
+            let info = {
+                "is_review_valid": isReviewValid,
+                "reason": reason,
+            };
+            let data = JSON.stringify(info);
+
+            SendMessageWithArgs("UpdateReviewInfo", data);
+
         } catch (e) {
             console.error(e);
             SendError("UpdateReviewInfoError", e.message);
         }
     }
 
-    function ReviewDialogOpen() {
+    async function ReviewDialogOpen() {
         console.log('ReviewDialogOpen from web');
 
         try {
-            ysdk.feedback.canReview()
-                .then(({value, reason}) => {
-                    if (!value) {
-                        SendError('DialogReviewError', "dialog show unavailable, reason: " + reason);
-                        window.focus();
-                        return;
-                    }
-                    ysdk.feedback.requestReview()
-                        .then(({feedbackSent}) => {
-                            let result = {
-                                "is_review_sent": feedbackSent,
-                            }
-                            var data = JSON.stringify(result);
+            var canReview = await ysdk.feedback.canReview();
+            if (!canReview.value) {
+                SendError('DialogReviewError', "dialog show unavailable, reason: " + canReview.reason);
+                window.focus();
+                return;
+            }
 
-                            SendMessageWithArgs('DialogReviewClosed', data);
-                            window.focus();
-                        });
-                });
+            var feedbackSent = await ysdk.feedback.requestReview();
+
+            let result = {
+                "is_review_sent": feedbackSent,
+            }
+            var data = JSON.stringify(result);
+
+            SendMessageWithArgs('DialogReviewClosed', data);
 
         } catch (e) {
             console.error(e);
             SendError('DialogReviewError', e);
+        } finally {
             window.focus();
         }
     }
@@ -279,18 +280,17 @@
     function SendPlayerData() {
         console.log('SendPlayerData from web');
         try {
-            player.getData(["saves"]).then(data => {
-                if (data.saves) {
-                    let result = {
-                        "data": data.saves
-                    }
-                    let json = JSON.stringify(result);
-
-                    SendMessageWithArgs('UpdatePlayerData', json);
-                } else {
-                    SendMessageWithArgs('UpdatePlayerData', "");
+            var data = player.getData(["saves"]);
+            if (data.saves) {
+                let result = {
+                    "data": data.saves
                 }
-            })
+                let json = JSON.stringify(result);
+
+                SendMessageWithArgs('UpdatePlayerData', json);
+            } else {
+                SendMessageWithArgs('UpdatePlayerData', "");
+            }
         } catch (e) {
             console.error(e);
             SendMessageWithArgs('UpdatePlayerDataError', e.message);
@@ -299,14 +299,15 @@
 
     function SavePlayerData(data) {
         console.log('SavePlayerData from web' + data);
+        
         try {
             let saves = {
                 "saves": data,
             };
 
-            player.setData(saves).then(() => {
-                SendMessage('SavePlayerDataSuccess');
-            });
+            player.setData(saves);
+            
+            SendMessage('SavePlayerDataSuccess');
 
         } catch (e) {
             console.error(e);
@@ -361,9 +362,9 @@
                     onClose: () => {
                         console.log('Video ad closed.');
                         let result = {
-                            "is_rewarded" :revarded,
+                            "is_rewarded": revarded,
                         }
-                        
+
                         let data = JSON.stringify(result);
                         SendMessageWithArgs('RewardedShowSuccess', data);
                     },
