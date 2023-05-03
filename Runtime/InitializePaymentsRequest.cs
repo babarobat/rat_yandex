@@ -3,7 +3,7 @@ using Newtonsoft.Json;
 
 namespace RatYandex.Runtime
 {
-    public class InitializePaymentsRequest : ARequest<InitializePaymentsResult, RequestError>
+    internal class InitializePaymentsRequest : ARequest<InitializePaymentsResult, RequestError>
     {
         private readonly YaApiBridge _bridge;
 
@@ -28,10 +28,5 @@ namespace RatYandex.Runtime
 
         protected override InitializePaymentsResult ParseResult(string data) => JsonConvert.DeserializeObject<InitializePaymentsResult>(data);
         protected override RequestError ParseError(string data) => JsonConvert.DeserializeObject<RequestError>(data);
-    }
-
-    public class InitializePaymentsResult 
-    {
-        [JsonProperty("purchases")] public string Purchases { get; set; }
     }
 }

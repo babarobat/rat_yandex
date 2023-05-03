@@ -4,12 +4,13 @@ using UnityEngine;
 
 namespace RatYandex.Runtime
 {
-    public enum RequestStatus
+    internal enum RequestStatus
     {
         None, InProgress, Success, Error, Canceled
     }
     
-    public abstract class ARequest<TResult, TError>
+    internal abstract class ARequest<TResult, TError> 
+        where TError: RequestError
     {
         public RequestStatus Status { get; private set; }
         public TResult Result { get; private set; }
@@ -71,7 +72,7 @@ namespace RatYandex.Runtime
         }
     }
     
-    public abstract class ARequestWithPayloadEmptyResult<TPayload, TError>
+    internal abstract class ARequestWithPayloadEmptyResult<TPayload, TError>
     {
         public RequestStatus Status { get; private set; }
         public TError Error { get; private set; }

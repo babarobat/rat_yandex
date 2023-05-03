@@ -3,7 +3,7 @@ using Newtonsoft.Json;
 
 namespace RatYandex.Runtime
 {
-    public class ReviewInfoRequest : ARequest<ReviewInfoResponse, RequestError>
+    internal class ReviewInfoRequest : ARequest<ReviewInfoResponse, RequestError>
     {
         private readonly YaApiBridge _bridge;
 

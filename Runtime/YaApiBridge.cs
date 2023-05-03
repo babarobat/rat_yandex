@@ -73,6 +73,5 @@ namespace RatYandex.Runtime
         [UsedImplicitly] public void RewardedShowError(string data) => OnRewardedShowError?.Invoke(data);
         [UsedImplicitly] public void InitializePaymentsSuccess(string data) => OnInitializePaymentsSuccess?.Invoke(data);
         [UsedImplicitly] public void InitializePaymentsError(string data) => OnInitializePaymentsError?.Invoke(data);
-
     }
 }
