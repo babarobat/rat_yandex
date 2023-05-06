@@ -163,14 +163,22 @@
         try {
             payments = await ysdk.getPayments({signed: true});
             console.log('payments initialized');
-            const purchases = await payments.getPurchases();
+            let purchases = await payments.getPurchases();
             console.log('purchases get success');
-            const catalog = await payments.getCatalog();
+            let catalog = await payments.getCatalog();
             console.log('catalog get success');
 
+            if (purchases === null){
+                purchases = "";
+            }
+
+            if (catalog === null){
+                catalog = "";
+            }
+            
             let result = {
-                "purchases": JSON.stringify(purchases),
-                "catalog": JSON.stringify(catalog),
+                "purchases": purchases,
+                "catalog": catalog,
             }
             let data = JSON.stringify(result);
 
@@ -277,20 +285,21 @@
         }
     }
 
-    function SendPlayerData() {
+     function SendPlayerData() {
         console.log('SendPlayerData from web');
         try {
-            var data = player.getData(["saves"]);
-            if (data.saves) {
-                let result = {
-                    "data": data.saves
-                }
-                let json = JSON.stringify(result);
+          player.getData(["saves"]).then(data => {
+              if (data.saves) {
+                  let result = {
+                      "data": data.saves
+                  }
+                  let json = JSON.stringify(result);
 
-                SendMessageWithArgs('UpdatePlayerData', json);
-            } else {
-                SendMessageWithArgs('UpdatePlayerData', "");
-            }
+                  SendMessageWithArgs('UpdatePlayerData', json);
+              } else {
+                  SendMessageWithArgs('UpdatePlayerData', "");
+              }
+          });
         } catch (e) {
             console.error(e);
             SendMessageWithArgs('UpdatePlayerDataError', e.message);
