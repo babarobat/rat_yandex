@@ -168,14 +168,14 @@
             let catalog = await payments.getCatalog();
             console.log('catalog get success');
 
-            if (purchases === null){
+            if (purchases === null) {
                 purchases = "";
             }
 
-            if (catalog === null){
+            if (catalog === null) {
                 catalog = "";
             }
-            
+
             let result = {
                 "purchases": purchases,
                 "catalog": catalog,
@@ -187,6 +187,37 @@
         } catch (e) {
             console.error(e)
             SendError('InitializePaymentsError', e.message);
+        }
+    }
+
+    //закрытие окна вызовет выброс исключения!
+    async function BuyConsumable(id) {
+        console.log('BuyConsumable from web ' + id);
+
+        try {
+            let purchase = await payments.purchase({id : id});
+            await payments.consumePurchase(purchase.purchaseToken);
+
+            SendMessage('BuyConsumableSuccess');
+
+        } catch (e) {
+            console.error(e)
+            SendError('BuyConsumableError', e.message);
+        }
+    }
+
+    //закрытие окна вызовет выброс исключения!
+    async function BuyNonConsumable(id) {
+        console.log('BuyNonConsumable from web ' + id);
+
+        try {
+            await payments.purchase({id : id});
+
+            SendMessage('BuyNonConsumableSuccess');
+
+        } catch (e) {
+            console.error(e)
+            SendError('BuyNonConsumableError', e.message);
         }
     }
 
@@ -285,21 +316,21 @@
         }
     }
 
-     function SendPlayerData() {
+    function SendPlayerData() {
         console.log('SendPlayerData from web');
         try {
-          player.getData(["saves"]).then(data => {
-              if (data.saves) {
-                  let result = {
-                      "data": data.saves
-                  }
-                  let json = JSON.stringify(result);
+            player.getData(["saves"]).then(data => {
+                if (data.saves) {
+                    let result = {
+                        "data": data.saves
+                    }
+                    let json = JSON.stringify(result);
 
-                  SendMessageWithArgs('UpdatePlayerData', json);
-              } else {
-                  SendMessageWithArgs('UpdatePlayerData', "");
-              }
-          });
+                    SendMessageWithArgs('UpdatePlayerData', json);
+                } else {
+                    SendMessageWithArgs('UpdatePlayerData', "");
+                }
+            });
         } catch (e) {
             console.error(e);
             SendMessageWithArgs('UpdatePlayerDataError', e.message);
@@ -308,14 +339,14 @@
 
     function SavePlayerData(data) {
         console.log('SavePlayerData from web' + data);
-        
+
         try {
             let saves = {
                 "saves": data,
             };
 
             player.setData(saves);
-            
+
             SendMessage('SavePlayerDataSuccess');
 
         } catch (e) {

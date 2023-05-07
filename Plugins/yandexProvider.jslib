@@ -46,4 +46,12 @@ mergeInto(LibraryManager.library, {
     _ShowRewarded: function () {
         ShowRewarded();
     },
+
+    _BuyConsumable: function (id) {
+        BuyConsumable(UTF8ToString(id));
+    },
+
+    _BuyNonConsumable: function (id) {
+        BuyNonConsumable(UTF8ToString(id));
+    },
 });

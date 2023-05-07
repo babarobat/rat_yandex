@@ -16,6 +16,8 @@ namespace RatYandex.Runtime
         [DllImport("__Internal")] private static extern void _GetReviewInfo();
         [DllImport("__Internal")] private static extern void _GetPlayerData();
         [DllImport("__Internal")] private static extern void _SetPlayerData(string data);
+        [DllImport("__Internal")] private static extern void _BuyConsumable(string id);
+        [DllImport("__Internal")] private static extern void _BuyNonConsumable(string id);
         [DllImport("__Internal")] private static extern void _ShowInterstitial();
         [DllImport("__Internal")] private static extern void _ShowRewarded();
         [DllImport("__Internal")] private static extern void _InitializePayments();
@@ -40,6 +42,10 @@ namespace RatYandex.Runtime
         public Action<string> OnRewardedShowError;
         public Action<string> OnInitializePaymentsSuccess;
         public Action<string> OnInitializePaymentsError;
+        public Action OnBuyConsumableSuccess;
+        public Action<string> OnBuyConsumableError;
+        public Action OnBuyNonConsumableSuccess;
+        public Action<string> OnBuyNonConsumableError;
         public void WebWindowAlert(string message) => _WebWindowAlert(message);
         public void WebConsoleLog(string message) => _WebConsoleLog(message);
         public void Initialize() => _Initialize();
@@ -49,6 +55,8 @@ namespace RatYandex.Runtime
         public void GetReviewInfo() => _GetReviewInfo();
         public void GetPlayerData() => _GetPlayerData();
         public void SetPlayerData(string data) => _SetPlayerData(data);
+        public void BuyConsumable(string id) => _BuyConsumable(id);
+        public void BuyNonConsumable(string id) => _BuyNonConsumable(id);
         public void ShowInterstitial() => _ShowInterstitial();
         public void ShowRewarded() => _ShowRewarded();
         public void InitializePayments() => _InitializePayments();
@@ -73,5 +81,9 @@ namespace RatYandex.Runtime
         [UsedImplicitly] public void RewardedShowError(string data) => OnRewardedShowError?.Invoke(data);
         [UsedImplicitly] public void InitializePaymentsSuccess(string data) => OnInitializePaymentsSuccess?.Invoke(data);
         [UsedImplicitly] public void InitializePaymentsError(string data) => OnInitializePaymentsError?.Invoke(data);
+        [UsedImplicitly] public void BuyConsumableSuccess() => OnBuyConsumableSuccess?.Invoke();
+        [UsedImplicitly] public void BuyConsumableError(string data) => OnBuyConsumableError?.Invoke(data);
+        [UsedImplicitly] public void BuyNonConsumableSuccess() => OnBuyNonConsumableSuccess?.Invoke();
+        [UsedImplicitly] public void BuyNonConsumableError(string data) => OnBuyNonConsumableError?.Invoke(data);
     }
 }

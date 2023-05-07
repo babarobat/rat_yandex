@@ -72,6 +72,20 @@ namespace RatYandex.Runtime
             return request.Result;
         }
 
+        public async Task BuyConsumable(string id)
+        {
+            var request = new BuyConsumableRequest(_bridge);
+            
+            await SendRequest(request, id);
+        }
+        
+        public async Task BuyNonConsumable(string id)
+        {
+            var request = new BuyNonConsumableRequest(_bridge);
+            
+            await SendRequest(request, id);
+        }
+
         private async Task SendRequest<TResponse, TError>(ARequest<TResponse, TError> request) where TError : RequestError
         {
             _bridge.WebConsoleLog($"start {request.GetType()} on client");
