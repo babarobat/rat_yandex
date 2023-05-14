@@ -18,9 +18,11 @@ namespace RatYandex.Runtime
         [DllImport("__Internal")] private static extern void _SetPlayerData(string data);
         [DllImport("__Internal")] private static extern void _BuyConsumable(string id);
         [DllImport("__Internal")] private static extern void _BuyNonConsumable(string id);
+        [DllImport("__Internal")] private static extern void _ResetNonConsumable(string id);
         [DllImport("__Internal")] private static extern void _ShowInterstitial();
         [DllImport("__Internal")] private static extern void _ShowRewarded();
         [DllImport("__Internal")] private static extern void _InitializePayments();
+        [DllImport("__Internal")] private static extern void _GetPurchases();
 
         public Action<string> OnInitializationSuccess;
         public Action<string> OnInitializationError;
@@ -46,6 +48,11 @@ namespace RatYandex.Runtime
         public Action<string> OnBuyConsumableError;
         public Action OnBuyNonConsumableSuccess;
         public Action<string> OnBuyNonConsumableError;
+        public Action<string> OnGetPurchasesSuccess;
+        public Action<string> OnGetPurchasesError;
+        public Action OnResetNonConsumableSuccess;
+        public Action<string> OnResetNonConsumableError;
+        
         public void WebWindowAlert(string message) => _WebWindowAlert(message);
         public void WebConsoleLog(string message) => _WebConsoleLog(message);
         public void Initialize() => _Initialize();
@@ -57,9 +64,11 @@ namespace RatYandex.Runtime
         public void SetPlayerData(string data) => _SetPlayerData(data);
         public void BuyConsumable(string id) => _BuyConsumable(id);
         public void BuyNonConsumable(string id) => _BuyNonConsumable(id);
+        public void ResetNonConsumable(string id) => _ResetNonConsumable(id);
         public void ShowInterstitial() => _ShowInterstitial();
         public void ShowRewarded() => _ShowRewarded();
         public void InitializePayments() => _InitializePayments();
+        public void GetPurchases() => _GetPurchases();
 
         [UsedImplicitly] public void InitializationSuccess(string data) => OnInitializationSuccess?.Invoke(data);
         [UsedImplicitly] public void InitializationError(string data) => OnInitializationError?.Invoke(data);
@@ -85,5 +94,9 @@ namespace RatYandex.Runtime
         [UsedImplicitly] public void BuyConsumableError(string data) => OnBuyConsumableError?.Invoke(data);
         [UsedImplicitly] public void BuyNonConsumableSuccess() => OnBuyNonConsumableSuccess?.Invoke();
         [UsedImplicitly] public void BuyNonConsumableError(string data) => OnBuyNonConsumableError?.Invoke(data);
+        [UsedImplicitly] public void ResetNonConsumableSuccess() => OnResetNonConsumableSuccess?.Invoke();
+        [UsedImplicitly] public void ResetNonConsumableError(string data) => OnResetNonConsumableError?.Invoke(data);
+        [UsedImplicitly] public void GetPurchasesSuccess(string data) => OnGetPurchasesSuccess?.Invoke(data);
+        [UsedImplicitly] public void GetPurchasesError(string data) => OnGetPurchasesError?.Invoke(data);
     }
 }

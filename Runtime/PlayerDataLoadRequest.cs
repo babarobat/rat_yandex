@@ -1,5 +1,6 @@
 using System;
 using Newtonsoft.Json;
+using UnityEngine;
 
 namespace RatYandex.Runtime
 {
@@ -25,7 +26,19 @@ namespace RatYandex.Runtime
             set => _bridge.OnPlayerDataError = value;
         }
 
-        protected override PlayerDataLoadResponse ParseResult(string data) => JsonConvert.DeserializeObject<PlayerDataLoadResponse>(data);
+        protected override PlayerDataLoadResponse ParseResult(string data)
+        {
+            try
+            {
+                return JsonConvert.DeserializeObject<PlayerDataLoadResponse>(data);
+            }
+            catch (Exception e)
+            {
+                Debug.LogError(e);
+                return new PlayerDataLoadResponse();
+            }
+        }
+
         protected override RequestError ParseError(string data) => JsonConvert.DeserializeObject<RequestError>(data);
     }
 }

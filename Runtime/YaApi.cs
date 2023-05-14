@@ -85,6 +85,22 @@ namespace RatYandex.Runtime
             
             await SendRequest(request, id);
         }
+        
+        public async Task ResetNonConsumable(string id)
+        {
+            var request = new ResetNonConsumableRequest(_bridge);
+            
+            await SendRequest(request, id);
+        }
+        
+        public async Task<Purchase[]> GetPurchases()
+        {
+            var request = new GetPurchasesRequest(_bridge);
+            
+            await SendRequest(request);
+
+            return request.Result.Purchases;
+        }
 
         private async Task SendRequest<TResponse, TError>(ARequest<TResponse, TError> request) where TError : RequestError
         {
