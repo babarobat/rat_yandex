@@ -28,7 +28,16 @@ namespace RatYandex.Runtime
 
             return request.Result;
         }
-        
+
+        public async Task<AuthenticationResponse> Authenticate()
+        {
+            var request = new AuthenticationRequest(_bridge);
+            
+            await SendRequest(request);
+
+            return request.Result;
+        }
+
         public async Task<InitializePaymentsResult> InitializePayments()
         {
             var request = new InitializePaymentsRequest(_bridge);
