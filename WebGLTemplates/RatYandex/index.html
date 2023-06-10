@@ -12,16 +12,16 @@
 <div id="unity-container" style="position: absolute; width: 100%; height: 100%; left: 0%; top: 0%;">
     <canvas id="unity-canvas" style="position: absolute; width: 100%; height: 100%;"></canvas>
     <div id="unity-loading-bar">
-        <div id="unity-logo"></div>
+<!--        <div id="unity-logo"></div>-->
         <div id="unity-progress-bar-empty">
             <div id="unity-progress-bar-full"></div>
         </div>
     </div>
     <div id="unity-warning"></div>
     <div id="unity-footer">
-        <div id="unity-webgl-logo"></div>
-        <div id="unity-fullscreen-button"></div>
-        <div id="unity-build-title">ya_test</div>
+<!--        <div id="unity-webgl-logo"></div>-->
+<!--        <div id="unity-fullscreen-button"></div>-->
+<!--        <div id="unity-build-title">ya_test</div>-->
     </div>
 </div>
 
@@ -50,8 +50,8 @@
     var canvas = document.querySelector("#unity-canvas");
     var loadingBar = document.querySelector("#unity-loading-bar");
     var progressBarFull = document.querySelector("#unity-progress-bar-full");
-    var fullscreenButton = document.querySelector("#unity-fullscreen-button");
-    var warningBanner = document.querySelector("#unity-warning");
+    //var fullscreenButton = document.querySelector("#unity-fullscreen-button");
+    //var warningBanner = document.querySelector("#unity-warning");
 
     // Shows a temporary message banner/ribbon for a few seconds, or
     // a permanent error message on top of the canvas if type=='error'.
@@ -60,24 +60,24 @@
     // way that non-critical warnings and error messages are presented to the
     // user.
 
-    function unityShowBanner(msg, type) {
-        function updateBannerVisibility() {
-            warningBanner.style.display = warningBanner.children.length ? 'block' : 'none';
-        }
-
-        var div = document.createElement('div');
-        div.innerHTML = msg;
-        warningBanner.appendChild(div);
-        if (type == 'error') div.style = 'background: red; padding: 10px;';
-        else {
-            if (type == 'warning') div.style = 'background: yellow; padding: 10px;';
-            setTimeout(function () {
-                warningBanner.removeChild(div);
-                updateBannerVisibility();
-            }, 5000);
-        }
-        updateBannerVisibility();
-    }
+    // function unityShowBanner(msg, type) {
+    //     function updateBannerVisibility() {
+    //        // warningBanner.style.display = warningBanner.children.length ? 'block' : 'none';
+    //     }
+    //
+    //     var div = document.createElement('div');
+    //     div.innerHTML = msg;
+    //     //warningBanner.appendChild(div);
+    //     if (type == 'error') div.style = 'background: red; padding: 10px;';
+    //     else {
+    //         if (type == 'warning') div.style = 'background: yellow; padding: 10px;';
+    //         setTimeout(function () {
+    //             //warningBanner.removeChild(div);
+    //             updateBannerVisibility();
+    //         }, 5000);
+    //     }
+    //     updateBannerVisibility();
+    // }
 
     // By default Unity keeps WebGL canvas render target size matched with
     // the DOM size of the canvas element (scaled by window.devicePixelRatio)
@@ -101,7 +101,7 @@
         // performance, uncomment the following line:
         // config.devicePixelRatio = 1;
 
-        unityShowBanner('WebGL builds are not supported on mobile devices.');
+       // unityShowBanner('WebGL builds are not supported on mobile devices.');
     } else {
         // Desktop style: Render the game canvas in a window that can be maximized to fullscreen:
 
@@ -123,9 +123,9 @@
         }).then((unityInstance) => {
             game = unityInstance;
             loadingBar.style.display = "none";
-            fullscreenButton.onclick = () => {
-                unityInstance.SetFullscreen(1);
-            };
+            // fullscreenButton.onclick = () => {
+            //     unityInstance.SetFullscreen(1);
+            // };
         }).catch((message) => {
             alert(message);
         });
@@ -136,10 +136,11 @@
 
         try {
             ysdk = await YaGames.init();
-
+            console.log('ysdk inited');
             window.ysdk = ysdk;
             ysdk.features.LoadingAPI?.ready();
-
+            console.log('ysdk ready');
+            
             player = await ysdk.getPlayer();
 
             const isPlayerAuthorized = player.getMode() !== 'lite';
@@ -158,8 +159,6 @@
     }
 
     async function InitializePayments() {
-        console.log('InitializePayments from web');
-
         try {
             payments = await ysdk.getPayments({signed: true});
             console.log('payments initialized');
@@ -195,7 +194,7 @@
         console.log('BuyConsumable from web ' + id);
 
         try {
-            let purchase = await payments.purchase({id : id});
+            let purchase = await payments.purchase({id: id});
             await payments.consumePurchase(purchase.purchaseToken);
 
             SendMessage('BuyConsumableSuccess');
@@ -211,13 +210,53 @@
         console.log('BuyNonConsumable from web ' + id);
 
         try {
-            await payments.purchase({id : id});
+            await payments.purchase({id: id});
 
             SendMessage('BuyNonConsumableSuccess');
 
         } catch (e) {
             console.error(e)
             SendError('BuyNonConsumableError', e.message);
+        }
+    }
+
+    async function ResetNonConsumable(id) {
+        console.log('ResetNonConsumable from web ' + id);
+
+        try {
+            let purchases = await payments.getPurchases();
+            console.log(purchases);
+            let purchase = purchases.find(x => x.productID === id);
+            console.log(purchase);
+            console.log(purchase.productId);
+            console.log(purchase.purchaseToken);
+            
+            await payments.consumePurchase(purchase.purchaseToken);
+
+            SendMessage('ResetNonConsumableSuccess');
+
+        } catch (e) {
+            console.error(e)
+            SendError('ResetNonConsumableError', e.message);
+        }
+    }
+
+    async function GetPurchases() {
+        console.log('GetPurchases from web ');
+
+        try {
+            let purchases = await payments.getPurchases();
+            
+            let result = {
+                "purchases": purchases,
+            }
+            let data = JSON.stringify(result);
+
+            SendMessageWithArgs('GetPurchasesSuccess', data);
+
+        } catch (e) {
+            console.error(e)
+            SendError('GetPurchasesError', e.message);
         }
     }
 
@@ -325,7 +364,6 @@
                         "data": data.saves
                     }
                     let json = JSON.stringify(result);
-
                     SendMessageWithArgs('UpdatePlayerData', json);
                 } else {
                     SendMessageWithArgs('UpdatePlayerData', "");
@@ -338,7 +376,7 @@
     }
 
     function SavePlayerData(data) {
-        console.log('SavePlayerData from web' + data);
+        console.log('SavePlayerData from web');
 
         try {
             let saves = {
@@ -421,7 +459,8 @@
     }
 
     function SendMessageWithArgs(methodName, args) {
-        console.log('send message to ' + methodName + ': ' + args);
+        //console.log('send message to ' + methodName + ': ' + args);
+        console.log('send message to ' + methodName);
         game.SendMessage("ya_api", methodName, args);
     }
 

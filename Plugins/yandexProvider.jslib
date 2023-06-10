@@ -54,4 +54,12 @@ mergeInto(LibraryManager.library, {
     _BuyNonConsumable: function (id) {
         BuyNonConsumable(UTF8ToString(id));
     },
+
+    _ResetNonConsumable: function (id) {
+        ResetNonConsumable(UTF8ToString(id));
+    },
+
+    _GetPurchases: function () {
+        GetPurchases();
+    },
 });
