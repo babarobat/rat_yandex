@@ -111,6 +111,24 @@ namespace RatYandex.Runtime
             return request.Result.Purchases;
         }
 
+        public async Task<bool> ShowReview()
+        {
+            var request = new ReviewShowRequest(_bridge);
+            
+            await SendRequest(request);
+
+            return request.Result.IsSent;
+        }
+        
+        public async Task<CanReviewResult> CanReview()
+        {
+            var request = new CanReviewRequest(_bridge);
+            
+            await SendRequest(request);
+
+            return request.Result;
+        }
+
         private async Task SendRequest<TResponse, TError>(ARequest<TResponse, TError> request) where TError : RequestError
         {
             _bridge.WebConsoleLog($"start {request.GetType()} on client");

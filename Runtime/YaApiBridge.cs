@@ -23,6 +23,8 @@ namespace RatYandex.Runtime
         [DllImport("__Internal")] private static extern void _ShowRewarded();
         [DllImport("__Internal")] private static extern void _InitializePayments();
         [DllImport("__Internal")] private static extern void _GetPurchases();
+        [DllImport("__Internal")] private static extern void _ShowReview();
+        [DllImport("__Internal")] private static extern void _CanReview();
 
         public Action<string> OnInitializationSuccess;
         public Action<string> OnInitializationError;
@@ -52,6 +54,10 @@ namespace RatYandex.Runtime
         public Action<string> OnGetPurchasesError;
         public Action OnResetNonConsumableSuccess;
         public Action<string> OnResetNonConsumableError;
+        public Action<string> OnShowReviewSuccess;
+        public Action<string> OnShowReviewError;
+        public Action<string> OnCanReviewSuccess;
+        public Action<string> OnCanReviewError;
         
         public void WebWindowAlert(string message) => _WebWindowAlert(message);
         public void WebConsoleLog(string message) => _WebConsoleLog(message);
@@ -69,6 +75,8 @@ namespace RatYandex.Runtime
         public void ShowRewarded() => _ShowRewarded();
         public void InitializePayments() => _InitializePayments();
         public void GetPurchases() => _GetPurchases();
+        public void ShowReview() => _ShowReview();
+        public void CanReview() => _CanReview();
 
         [UsedImplicitly] public void InitializationSuccess(string data) => OnInitializationSuccess?.Invoke(data);
         [UsedImplicitly] public void InitializationError(string data) => OnInitializationError?.Invoke(data);
@@ -98,5 +106,9 @@ namespace RatYandex.Runtime
         [UsedImplicitly] public void ResetNonConsumableError(string data) => OnResetNonConsumableError?.Invoke(data);
         [UsedImplicitly] public void GetPurchasesSuccess(string data) => OnGetPurchasesSuccess?.Invoke(data);
         [UsedImplicitly] public void GetPurchasesError(string data) => OnGetPurchasesError?.Invoke(data);
+        [UsedImplicitly] public void ShowRateUsSuccess(string data) => OnShowReviewSuccess?.Invoke(data);
+        [UsedImplicitly] public void ShowRateUsError(string data) => OnShowReviewError?.Invoke(data);
+        [UsedImplicitly] public void CanReviewSuccess(string data) => OnCanReviewSuccess?.Invoke(data);
+        [UsedImplicitly] public void CanReviewError(string data) => OnCanReviewError?.Invoke(data);
     }
 }
