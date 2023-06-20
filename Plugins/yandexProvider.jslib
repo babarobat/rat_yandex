@@ -62,4 +62,12 @@ mergeInto(LibraryManager.library, {
     _GetPurchases: function () {
         GetPurchases();
     },
+
+    _CanReview: function () {
+        ShowReview();
+    },
+    
+    _ShowReview: function () {
+        ShowReview();
+    },
 });

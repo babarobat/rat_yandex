@@ -12,16 +12,16 @@
 <div id="unity-container" style="position: absolute; width: 100%; height: 100%; left: 0%; top: 0%;">
     <canvas id="unity-canvas" style="position: absolute; width: 100%; height: 100%;"></canvas>
     <div id="unity-loading-bar">
-<!--        <div id="unity-logo"></div>-->
+        <!--        <div id="unity-logo"></div>-->
         <div id="unity-progress-bar-empty">
             <div id="unity-progress-bar-full"></div>
         </div>
     </div>
     <div id="unity-warning"></div>
     <div id="unity-footer">
-<!--        <div id="unity-webgl-logo"></div>-->
-<!--        <div id="unity-fullscreen-button"></div>-->
-<!--        <div id="unity-build-title">ya_test</div>-->
+        <!--        <div id="unity-webgl-logo"></div>-->
+        <!--        <div id="unity-fullscreen-button"></div>-->
+        <!--        <div id="unity-build-title">ya_test</div>-->
     </div>
 </div>
 
@@ -101,7 +101,7 @@
         // performance, uncomment the following line:
         // config.devicePixelRatio = 1;
 
-       // unityShowBanner('WebGL builds are not supported on mobile devices.');
+        // unityShowBanner('WebGL builds are not supported on mobile devices.');
     } else {
         // Desktop style: Render the game canvas in a window that can be maximized to fullscreen:
 
@@ -140,7 +140,7 @@
             window.ysdk = ysdk;
             ysdk.features.LoadingAPI?.ready();
             console.log('ysdk ready');
-            
+
             player = await ysdk.getPlayer();
 
             const isPlayerAuthorized = player.getMode() !== 'lite';
@@ -158,6 +158,41 @@
         }
     }
 
+    async function CanReview() {
+        try {
+            var request = await ysdk.feedback.canReview();
+
+            let result = {
+                "value": request.value,
+                "reason": request.reason
+            }
+            let data = JSON.stringify(result);
+
+            SendMessageWithArgs('CanReviewSuccess', data);
+        } catch (e) {
+            console.error(e)
+            SendError('CanReviewError', e.message);
+        }
+    }
+
+    async function ShowReview() {
+        try {
+
+            var isSent = await ysdk.feedback.requestReview();
+
+            let result = {
+                "is_sent": isSent,
+            }
+            let data = JSON.stringify(result);
+
+            SendMessageWithArgs('ShowReviewSuccess', data);
+
+        } catch (e) {
+            console.error(e)
+            SendError('ShowReviewError', e.message);
+        }
+    }
+    
     async function InitializePayments() {
         try {
             payments = await ysdk.getPayments({signed: true});
@@ -230,7 +265,7 @@
             console.log(purchase);
             console.log(purchase.productId);
             console.log(purchase.purchaseToken);
-            
+
             await payments.consumePurchase(purchase.purchaseToken);
 
             SendMessage('ResetNonConsumableSuccess');
@@ -246,7 +281,7 @@
 
         try {
             let purchases = await payments.getPurchases();
-            
+
             let result = {
                 "purchases": purchases,
             }
