@@ -362,34 +362,6 @@
         }
     }
 
-    async function ReviewDialogOpen() {
-        console.log('ReviewDialogOpen from web');
-
-        try {
-            var canReview = await ysdk.feedback.canReview();
-            if (!canReview.value) {
-                SendError('DialogReviewError', "dialog show unavailable, reason: " + canReview.reason);
-                window.focus();
-                return;
-            }
-
-            var feedbackSent = await ysdk.feedback.requestReview();
-
-            let result = {
-                "is_review_sent": feedbackSent,
-            }
-            var data = JSON.stringify(result);
-
-            SendMessageWithArgs('DialogReviewClosed', data);
-
-        } catch (e) {
-            console.error(e);
-            SendError('DialogReviewError', e);
-        } finally {
-            window.focus();
-        }
-    }
-
     function SendPlayerData() {
         console.log('SendPlayerData from web');
         try {
