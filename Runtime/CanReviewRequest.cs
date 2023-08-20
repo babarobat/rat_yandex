@@ -32,7 +32,7 @@ namespace RatYandex.Runtime
 
     public class CanReviewResult
     {
-        [JsonProperty("value")]public bool Value { get; set; }
-        [JsonProperty("reason")]public string Reason { get; set; }
+        [JsonProperty("value")] public bool Value { get; set; }
+        [JsonProperty("reason")] public string Reason { get; set; }
     }
 }
