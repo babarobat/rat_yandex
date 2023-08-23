@@ -68,7 +68,11 @@ namespace RatYandex.Runtime
         public void InitializePayments() => _InitializePayments();
         public void GetPurchases() => _GetPurchases();
         public void ShowReview() => _ShowReview();
-        public void CanReview() => _CanReview();
+        public void CanReview()
+        {
+            Debug.Log($"[custom_log][{Time.frameCount}][{GetType().Name}][{nameof(CanReview)}]");
+            _CanReview();
+        }
 
         [UsedImplicitly] public void InitializationSuccess(string data) => OnInitializationSuccess?.Invoke(data);
         [UsedImplicitly] public void InitializationError(string data) => OnInitializationError?.Invoke(data);

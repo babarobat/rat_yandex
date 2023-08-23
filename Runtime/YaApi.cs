@@ -131,18 +131,18 @@ namespace RatYandex.Runtime
 
         private async Task SendRequest<TResponse, TError>(ARequest<TResponse, TError> request) where TError : RequestError
         {
-            _bridge.WebConsoleLog($"start {request.GetType()} on client");
+            _bridge.WebConsoleLog($"start {request.GetType().Name} on client");
 
             await _bridge.AwaitCoroutine(request.Send());
 
             if (request.Status != RequestStatus.Success)
             {
-                _bridge.WebConsoleLog($"error {request.GetType()} on client {request.Error.Message}");
+                _bridge.WebConsoleLog($"error {request.GetType().Name} on client {request.Error.Message}");
                 
                 throw new YaException($"{request.Error.Message}");
             }
             
-            _bridge.WebConsoleLog($"success {request.GetType()} on client");
+            _bridge.WebConsoleLog($"success {request.GetType().Name} on client");
         }
 
         private async Task SendRequest<TPayLoad, TError>(ARequestWithPayloadEmptyResult<TPayLoad,TError> request, TPayLoad payLoad) where TError : RequestError

@@ -159,15 +159,16 @@
     }
 
     async function CanReview() {
+        console.log("[web]: validate review start_0");
         try {
-            var request = await ysdk.feedback.canReview();
-
+            console.log("[web]: validate review start");
+            let request = await ysdk.feedback.canReview();
+            console.log("[web]: validate review success");
             let result = {
                 "value": request.value,
                 "reason": request.reason
             }
             let data = JSON.stringify(result);
-
             SendMessageWithArgs('CanReviewSuccess', data);
         } catch (e) {
             console.error(e)
@@ -177,11 +178,12 @@
 
     async function ShowReview() {
         try {
-
-            var isSent = await ysdk.feedback.requestReview();
+            console.log("[web]: ShowReview start");
+            let request = await ysdk.feedback.requestReview();
+            console.log("[web]: ShowReview end");
 
             let result = {
-                "is_sent": isSent,
+                "is_sent": request.feedbackSent,
             }
             let data = JSON.stringify(result);
 
@@ -199,6 +201,7 @@
             console.log('payments initialized');
             let purchases = await payments.getPurchases();
             console.log('purchases get success');
+            console.log(purchases);
             let catalog = await payments.getCatalog();
             console.log('catalog get success');
 
@@ -337,28 +340,6 @@
         } catch (e) {
             console.error(e);
             SendError("UpdatePlayerInfoError", e.message);
-        }
-    }
-
-    async function SendReviewInfo() {
-        console.log('SendReviewInfo from web');
-
-        try {
-            var canReview = await ysdk.feedback.canReview();
-            var isReviewValid = canReview.value;
-            var reason = canReview.reason;
-
-            let info = {
-                "is_review_valid": isReviewValid,
-                "reason": reason,
-            };
-            let data = JSON.stringify(info);
-
-            SendMessageWithArgs("UpdateReviewInfo", data);
-
-        } catch (e) {
-            console.error(e);
-            SendError("UpdateReviewInfoError", e.message);
         }
     }
 

@@ -6,8 +6,8 @@ mergeInto(LibraryManager.library, {
     _WebConsoleLog: function (str) {
         console.log(UTF8ToString(str));
     },
-    
-    _Initialize: function (){
+
+    _Initialize: function () {
         Initialize();
     },
 
@@ -15,16 +15,8 @@ mergeInto(LibraryManager.library, {
         InitializePayments();
     },
 
-    _GetReviewInfo: function () {
-        SendReviewInfo();
-    },
-
     _GetPlayerInfo: function () {
         SendPlayerInfo();
-    },
-
-    _ReviewDialogOpen: function () {
-        ReviewDialogOpen();
     },
 
     _AuthDialogOpen: function () {
@@ -64,10 +56,12 @@ mergeInto(LibraryManager.library, {
     },
 
     _CanReview: function () {
-        ShowReview();
+        console.log("[provider][_CanReview]");
+        CanReview();
     },
-    
+
     _ShowReview: function () {
+        console.log("[provider][_ShowReview]");
         ShowReview();
     },
 });
