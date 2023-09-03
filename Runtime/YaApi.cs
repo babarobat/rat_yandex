@@ -58,9 +58,9 @@ namespace RatYandex.Runtime
 
         public async Task SavePlayerData(string data)
         {
-            var request = new PlayerDataSaveRequest(_bridge);
+            var request = new PlayerDataSaveRequest(_bridge, data);
             
-            await SendRequest(request, data);
+            await SendRequest(request);
         }
 
         public async Task<InterstitialShowResult> ShowInterstitial()
@@ -83,23 +83,23 @@ namespace RatYandex.Runtime
 
         public async Task BuyConsumable(string id)
         {
-            var request = new BuyConsumableRequest(_bridge);
+            var request = new BuyConsumableRequest(_bridge, id);
             
-            await SendRequest(request, id);
+            await SendRequest(request);
         }
         
         public async Task BuyNonConsumable(string id)
         {
-            var request = new BuyNonConsumableRequest(_bridge);
+            var request = new BuyNonConsumableRequest(_bridge, id);
             
-            await SendRequest(request, id);
+            await SendRequest(request);
         }
         
         public async Task ResetNonConsumable(string id)
         {
-            var request = new ResetNonConsumableRequest(_bridge);
+            var request = new ResetNonConsumableRequest(_bridge, id);
             
-            await SendRequest(request, id);
+            await SendRequest(request);
         }
         
         public async Task<Purchase[]> GetPurchases()
@@ -129,44 +129,20 @@ namespace RatYandex.Runtime
             return request.Result;
         }
 
-        private async Task SendRequest<TResponse, TError>(ARequest<TResponse, TError> request) where TError : RequestError
-        {
-            _bridge.WebConsoleLog($"start {request.GetType().Name} on client");
-
-            await _bridge.AwaitCoroutine(request.Send());
-
-            if (request.Status != RequestStatus.Success)
-            {
-                _bridge.WebConsoleLog($"error {request.GetType().Name} on client {request.Error.Message}");
-                
-                throw new YaException($"{request.Error.Message}");
-            }
-            
-            _bridge.WebConsoleLog($"success {request.GetType().Name} on client");
-        }
-
-        private async Task SendRequest<TPayLoad, TError>(ARequestWithPayloadEmptyResult<TPayLoad,TError> request, TPayLoad payLoad) where TError : RequestError
+        private async Task SendRequest(ARequest request) 
         {
             _bridge.WebConsoleLog($"start {request.GetType()} on client");
-
-            await _bridge.AwaitCoroutine(request.Send(payLoad));
-
+        
+            await _bridge.AwaitCoroutine(request.Send());
+        
             if (request.Status != RequestStatus.Success)
             {
                 _bridge.WebConsoleLog($"error {request.GetType()} on client {request.Error.Message}");
                 
-                throw new YaException($"{request.Error.Message}");
+                throw new YaRequestException(request);
             }
             
             _bridge.WebConsoleLog($"success {request.GetType()} on client");
-        }
-    }
-
-    public class YaException : Exception
-    {
-        public YaException(string message) : base(message)
-        {
-            
         }
     }
 

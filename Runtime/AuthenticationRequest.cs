@@ -3,7 +3,7 @@ using Newtonsoft.Json;
 
 namespace RatYandex.Runtime
 {
-    internal class AuthenticationRequest : ARequest<AuthenticationResponse, RequestError>
+    internal class AuthenticationRequest : ARequest<AuthenticationResponse>
     {
         private readonly YaApiBridge _bridge;
 
@@ -18,7 +18,7 @@ namespace RatYandex.Runtime
             get => _bridge.OnAuthenticationSuccess;
             set => _bridge.OnAuthenticationSuccess = value;
         }
-
+        
         protected override Action<string> ErrorProvider {
             get => _bridge.OnAuthenticationError;
             set => _bridge.OnAuthenticationError = value;

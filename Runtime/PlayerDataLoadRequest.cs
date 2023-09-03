@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace RatYandex.Runtime
 {
-    internal class PlayerDataLoadRequest : ARequest<PlayerDataLoadResponse, RequestError>
+    internal class PlayerDataLoadRequest : ARequest<PlayerDataLoadResponse>
     {
         private readonly YaApiBridge _bridge;
 

@@ -3,11 +3,11 @@ using Newtonsoft.Json;
 
 namespace RatYandex.Runtime
 {
-    internal class PlayerDataSaveRequest : ARequestWithPayloadEmptyResult<string, RequestError>
+    internal class PlayerDataSaveRequest : ARequestWithPayloadEmptyResult<string>
     {
         private readonly YaApiBridge _bridge;
 
-        public PlayerDataSaveRequest(YaApiBridge bridge)
+        public PlayerDataSaveRequest(YaApiBridge bridge, string payLoad) : base(payLoad)
         {
             _bridge = bridge;
         }

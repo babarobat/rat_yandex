@@ -3,11 +3,11 @@ using Newtonsoft.Json;
 
 namespace RatYandex.Runtime
 {
-    internal class BuyNonConsumableRequest : ARequestWithPayloadEmptyResult<string, RequestError>
+    internal class BuyNonConsumableRequest : ARequestWithPayloadEmptyResult<string>
     {
         private readonly YaApiBridge _bridge;
 
-        public BuyNonConsumableRequest(YaApiBridge bridge)
+        public BuyNonConsumableRequest(YaApiBridge bridge, string payload) : base(payload)  
         {
             _bridge = bridge;
         }
@@ -19,7 +19,7 @@ namespace RatYandex.Runtime
             get => _bridge.OnBuyNonConsumableSuccess;
             set => _bridge.OnBuyNonConsumableSuccess = value;
         }
-
+        
         protected override Action<string> ErrorProvider
         {
             get => _bridge.OnBuyNonConsumableError;

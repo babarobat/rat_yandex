@@ -3,7 +3,7 @@ using Newtonsoft.Json;
 
 namespace RatYandex.Runtime
 {
-    internal class InterstitialShowRequest : ARequest<InterstitialShowResult, RequestError>
+    internal class InterstitialShowRequest : ARequest<InterstitialShowResult>
     {
         private readonly YaApiBridge _bridge;
 
@@ -13,7 +13,6 @@ namespace RatYandex.Runtime
         }
 
         protected override Action Request => _bridge.ShowInterstitial;
-
         protected override Action<string> ResponseProvider
         {
             get => _bridge.OnAdsInterstitialSuccess;

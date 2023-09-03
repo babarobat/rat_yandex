@@ -3,7 +3,7 @@ using Newtonsoft.Json;
 
 namespace RatYandex.Runtime
 {
-    internal class ReviewShowRequest : ARequest<ShowReview, RequestError>
+    internal class ReviewShowRequest : ARequest<ShowReview>
     {
         private readonly YaApiBridge _bridge;
 
@@ -13,7 +13,7 @@ namespace RatYandex.Runtime
         }
 
         protected override Action Request => _bridge.ShowReview;
-
+        
         protected override Action<string> ResponseProvider
         {
             get => _bridge.OnShowReviewSuccess;

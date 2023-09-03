@@ -3,7 +3,7 @@ using Newtonsoft.Json;
 
 namespace RatYandex.Runtime
 {
-    internal class GetPurchasesRequest : ARequest<GetPurchasesResult, RequestError>
+    internal class GetPurchasesRequest : ARequest<GetPurchasesResult>
     {
         private readonly YaApiBridge _bridge;
 
@@ -19,7 +19,7 @@ namespace RatYandex.Runtime
             get => _bridge.OnGetPurchasesSuccess;
             set => _bridge.OnGetPurchasesSuccess = value;
         }
-
+        
         protected override Action<string> ErrorProvider
         {
             get => _bridge.OnGetPurchasesError;
