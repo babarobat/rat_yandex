@@ -7,6 +7,7 @@ namespace RatYandex.Runtime
 {
     public class YaApiBridge : MonoBehaviour, ICoroutine
     {
+#if UNITY_WEB_GL
         [DllImport("__Internal")] private static extern void _WebWindowAlert(string message);
         [DllImport("__Internal")] private static extern void _WebConsoleLog(string message);
         [DllImport("__Internal")] private static extern void _Initialize();
@@ -23,7 +24,7 @@ namespace RatYandex.Runtime
         [DllImport("__Internal")] private static extern void _GetPurchases();
         [DllImport("__Internal")] private static extern void _ShowReview();
         [DllImport("__Internal")] private static extern void _CanReview();
-
+#endif
         public Action<string> OnInitializationSuccess;
         public Action<string> OnInitializationError;
         public Action<string> OnAuthenticationSuccess;
@@ -52,28 +53,117 @@ namespace RatYandex.Runtime
         public Action<string> OnShowReviewError;
         public Action<string> OnCanReviewSuccess;
         public Action<string> OnCanReviewError;
-        
-        public void WebWindowAlert(string message) => _WebWindowAlert(message);
-        public void WebConsoleLog(string message) => _WebConsoleLog(message);
-        public void Initialize() => _Initialize();
-        public void AuthDialogOpen() => _AuthDialogOpen();
-        public void GetPlayerInfo() => _GetPlayerInfo();
-        public void GetPlayerData() => _GetPlayerData();
-        public void SetPlayerData(string data) => _SetPlayerData(data);
-        public void BuyConsumable(string id) => _BuyConsumable(id);
-        public void BuyNonConsumable(string id) => _BuyNonConsumable(id);
-        public void ResetNonConsumable(string id) => _ResetNonConsumable(id);
-        public void ShowInterstitial() => _ShowInterstitial();
-        public void ShowRewarded() => _ShowRewarded();
-        public void InitializePayments() => _InitializePayments();
-        public void GetPurchases() => _GetPurchases();
-        public void ShowReview() => _ShowReview();
-        public void CanReview()
+    
+        public void WebWindowAlert(string message)
         {
-            Debug.Log($"[custom_log][{Time.frameCount}][{GetType().Name}][{nameof(CanReview)}]");
-            _CanReview();
+#if RAT_YANDEX
+            _WebWindowAlert(message);
+#endif
+        }
+        public void WebConsoleLog(string message)
+        {
+#if RAT_YANDEX
+            _WebConsoleLog(message);
+#endif
         }
 
+        public void Initialize()
+        {
+#if RAT_YANDEX
+            _Initialize();
+#endif
+        }
+
+        public void AuthDialogOpen()
+        {
+#if RAT_YANDEX
+            _AuthDialogOpen();
+#endif
+        }
+
+        public void GetPlayerInfo()
+        {
+#if RAT_YANDEX
+            _GetPlayerInfo();
+#endif
+        }
+
+        public void GetPlayerData()
+        {
+#if RAT_YANDEX
+            _GetPlayerData();
+#endif
+        }
+
+        public void SetPlayerData(string data)
+        {
+#if RAT_YANDEX
+            _SetPlayerData(data);
+#endif
+        }
+
+        public void BuyConsumable(string id)
+        {
+#if RAT_YANDEX
+            _BuyConsumable(id);
+#endif
+        }
+
+        public void BuyNonConsumable(string id)
+        {
+#if RAT_YANDEX
+            _BuyNonConsumable(id);
+#endif
+        }
+
+        public void ResetNonConsumable(string id)
+        {
+#if RAT_YANDEX
+            _ResetNonConsumable(id);
+#endif
+        }
+
+        public void ShowInterstitial()
+        {
+#if RAT_YANDEX
+            _ShowInterstitial();
+#endif
+        }
+
+        public void ShowRewarded()
+        {
+#if RAT_YANDEX
+            _ShowRewarded();
+#endif
+        }
+
+        public void InitializePayments()
+        {
+#if RAT_YANDEX
+            _InitializePayments();
+#endif
+        }
+
+        public void GetPurchases()
+        {
+#if RAT_YANDEX
+            _GetPurchases();
+#endif
+        }
+
+        public void ShowReview()
+        {
+#if RAT_YANDEX
+            _ShowReview();
+#endif
+        }
+
+        public void CanReview()
+        {
+#if RAT_YANDEX
+            _CanReview();
+#endif
+        }
         [UsedImplicitly] public void InitializationSuccess(string data) => OnInitializationSuccess?.Invoke(data);
         [UsedImplicitly] public void InitializationError(string data) => OnInitializationError?.Invoke(data);
         [UsedImplicitly] public void AuthenticationSuccess(string data) => OnAuthenticationSuccess?.Invoke(data);
