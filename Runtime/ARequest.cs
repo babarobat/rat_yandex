@@ -81,6 +81,61 @@ namespace RatYandex.Runtime
         }
     }
     
+    internal abstract class ARequestWithPayLoad<TPayLoad, TResult>  : ARequest
+    {
+        public TResult Result { get; private set; }
+        public TPayLoad PayLoad { get; private set; }
+        
+        protected ARequestWithPayLoad(TPayLoad payload)
+        {
+            PayLoad = payload;
+        }
+
+        public override IEnumerator Send()
+        {
+            if (Status == RequestStatus.InProgress)
+            {
+                yield break; 
+            }
+            
+            Status = RequestStatus.InProgress;
+
+            ResponseProvider += OnSuccess;
+            ErrorProvider += OnError;
+            
+            Request.Invoke(PayLoad);
+
+            yield return WaitResponse;
+            
+            ResponseProvider -= OnSuccess;
+            ErrorProvider -= OnError;
+        }
+
+        public override void Cancel()
+        {
+            Status = RequestStatus.Canceled;
+            
+            ResponseProvider -= OnSuccess;
+            ErrorProvider -= OnError;
+        }
+
+        protected abstract Action<TPayLoad> Request { get; }
+        protected abstract Action<string> ResponseProvider { get; set; }
+        protected abstract TResult ParseResult(string data);
+        
+        private void OnSuccess(string data)
+        {
+            Result = ParseResult(data);
+            Status = RequestStatus.Success;
+        }
+
+        private void OnError(string data)
+        {
+            Error = ParseError(data);
+            Status = RequestStatus.Error;
+        }
+    }
+    
     internal abstract class ARequestWithPayloadEmptyResult<TPayload> : ARequest
     {
         public TPayload Payload { get; }

@@ -129,6 +129,27 @@ namespace RatYandex.Runtime
             return request.Result;
         }
 
+        public async Task<IsLeaderboardAvailableResult> IsLeaderboardAvailable(string leaderboardId)
+        {
+            var request = new IsLeaderboardAvailableRequest(_bridge, leaderboardId);
+
+            await SendRequest(request);
+            
+            return request.Result;
+        }
+
+        public async Task SetLeaderboardEntry(string leaderBoardId, int value, string payLoad)
+        {
+            var request = new SetLeaderboardEntryRequest(_bridge, new SetLeaderboardEntryRequestPayload
+            {
+                LeaderBoardId = leaderBoardId,
+                Value = value,
+                PayLoad = payLoad
+            });
+
+            await SendRequest(request);
+        }
+
         private async Task SendRequest(ARequest request) 
         {
             _bridge.WebConsoleLog($"start {request.GetType()} on client");

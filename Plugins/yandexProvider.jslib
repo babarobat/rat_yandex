@@ -56,12 +56,18 @@ mergeInto(LibraryManager.library, {
     },
 
     _CanReview: function () {
-        console.log("[provider][_CanReview]");
         CanReview();
     },
 
     _ShowReview: function () {
-        console.log("[provider][_ShowReview]");
         ShowReview();
+    },
+
+    _IsLeaderboardAvailable: function (leaderboardId) {
+        IsLeaderboardAvailable(UTF8ToString(leaderboardId));
+    },
+
+    _SetLeaderboardEntry: function (leaderboardId, value, payLoad) {
+        SetLeaderboardEntry(UTF8ToString(leaderboardId), value, UTF8ToString(payLoad));
     },
 });

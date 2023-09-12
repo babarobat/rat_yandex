@@ -23,6 +23,8 @@ namespace RatYandex.Runtime
         [DllImport("__Internal")] private static extern void _GetPurchases();
         [DllImport("__Internal")] private static extern void _ShowReview();
         [DllImport("__Internal")] private static extern void _CanReview();
+        [DllImport("__Internal")] private static extern void _IsLeaderboardAvailable(string id);
+        [DllImport("__Internal")] private static extern void _SetLeaderboardEntry(string leaderboardId, int value, string payLoad);
 
         public Action<string> OnInitializationSuccess;
         public Action<string> OnInitializationError;
@@ -52,6 +54,10 @@ namespace RatYandex.Runtime
         public Action<string> OnShowReviewError;
         public Action<string> OnCanReviewSuccess;
         public Action<string> OnCanReviewError;
+        public Action<string> OnIsLeaderboardAvailableSuccess;
+        public Action<string> OnIsLeaderboardAvailableError;
+        public Action OnSetLeaderboardEntrySuccess;
+        public Action<string> OnSetLeaderboardEntryError;
         
         public void WebWindowAlert(string message) => _WebWindowAlert(message);
         public void WebConsoleLog(string message) => _WebConsoleLog(message);
@@ -68,11 +74,9 @@ namespace RatYandex.Runtime
         public void InitializePayments() => _InitializePayments();
         public void GetPurchases() => _GetPurchases();
         public void ShowReview() => _ShowReview();
-        public void CanReview()
-        {
-            Debug.Log($"[custom_log][{Time.frameCount}][{GetType().Name}][{nameof(CanReview)}]");
-            _CanReview();
-        }
+        public void CanReview() => _CanReview();
+        public void IsLeaderboardAvailable(string id) => _IsLeaderboardAvailable(id);
+        public void SetLeaderboardEntry(SetLeaderboardEntryRequestPayload data) => _SetLeaderboardEntry(data.LeaderBoardId, data.Value, data.PayLoad);
 
         [UsedImplicitly] public void InitializationSuccess(string data) => OnInitializationSuccess?.Invoke(data);
         [UsedImplicitly] public void InitializationError(string data) => OnInitializationError?.Invoke(data);
@@ -102,5 +106,10 @@ namespace RatYandex.Runtime
         [UsedImplicitly] public void ShowReviewError(string data) => OnShowReviewError?.Invoke(data);
         [UsedImplicitly] public void CanReviewSuccess(string data) => OnCanReviewSuccess?.Invoke(data);
         [UsedImplicitly] public void CanReviewError(string data) => OnCanReviewError?.Invoke(data);
+        [UsedImplicitly] public void IsLeaderboardAvailableSuccess(string data) => OnIsLeaderboardAvailableSuccess?.Invoke(data);
+        [UsedImplicitly] public void IsLeaderboardAvailableError(string data) => OnIsLeaderboardAvailableError?.Invoke(data);
+        [UsedImplicitly] public void SetLeaderboardEntrySuccess() => OnSetLeaderboardEntrySuccess?.Invoke();
+        [UsedImplicitly] public void SetLeaderboardEntryError(string data) => OnSetLeaderboardEntryError?.Invoke(data);
+
     }
 }

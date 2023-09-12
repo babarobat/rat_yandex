@@ -194,7 +194,7 @@
             SendError('ShowReviewError', e.message);
         }
     }
-    
+
     async function InitializePayments() {
         try {
             payments = await ysdk.getPayments({signed: true});
@@ -295,6 +295,40 @@
         } catch (e) {
             console.error(e)
             SendError('GetPurchasesError', e.message);
+        }
+    }
+
+    async function IsLeaderboardAvailable(leaderboardId) {
+        console.log('IsLeaderboardAvailable from web ');
+
+        try {
+            const isAuth = player.getMode() === 'lite';
+
+            if (!isAuth){
+                let result = {
+                    "value": false,
+                    "reason": "no_auth"
+                }
+                let data = JSON.stringify(result);
+
+                SendMessageWithArgs('IsLeaderboardAvailableSuccess', data);
+
+                return;
+            }
+
+            const lb = await ysdk.getLeaderboards();
+            await lb.getLeaderboardDescription(leaderboardId);
+
+            let result = {
+                "value": true,
+            }
+            let data = JSON.stringify(result);
+
+            SendMessageWithArgs('IsLeaderboardAvailableSuccess', data);
+
+        } catch (e) {
+            console.error(e)
+            SendError('IsLeaderboardAvailableError', e.message);
         }
     }
 
