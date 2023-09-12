@@ -33,6 +33,6 @@ namespace RatYandex.Runtime
     public class IsLeaderboardAvailableResult
     {
         [JsonProperty("value")] public bool Value { get; set; }
-        [JsonProperty("value")] public string Reason { get; set; }
+        [JsonProperty("reason")] public string Reason { get; set; }
     }
 }
