@@ -7,7 +7,7 @@ namespace RatYandex.Runtime
 {
     public class YaApiBridge : MonoBehaviour, ICoroutine
     {
-#if UNITY_WEB_GL
+#if RAT_YANDEX
         [DllImport("__Internal")] private static extern void _WebWindowAlert(string message);
         [DllImport("__Internal")] private static extern void _WebConsoleLog(string message);
         [DllImport("__Internal")] private static extern void _Initialize();
@@ -55,6 +55,10 @@ namespace RatYandex.Runtime
         public Action<string> OnShowReviewError;
         public Action<string> OnCanReviewSuccess;
         public Action<string> OnCanReviewError;
+        public Action<string> OnIsLeaderboardAvailableSuccess;
+        public Action<string> OnIsLeaderboardAvailableError;
+        public Action OnSetLeaderboardEntrySuccess;
+        public Action<string> OnSetLeaderboardEntryError;
     
         public void WebWindowAlert(string message)
         {
@@ -166,6 +170,18 @@ namespace RatYandex.Runtime
             _CanReview();
 #endif
         }
+        public void IsLeaderboardAvailable(string id)
+        {
+#if RAT_YANDEX
+            _IsLeaderboardAvailable(id);
+#endif
+        }
+        public void SetLeaderboardEntry(SetLeaderboardEntryRequestPayload data)
+        {
+#if RAT_YANDEX
+            _SetLeaderboardEntry(data.LeaderBoardId, data.Value, data.PayLoad);
+#endif
+        }
         [UsedImplicitly] public void InitializationSuccess(string data) => OnInitializationSuccess?.Invoke(data);
         [UsedImplicitly] public void InitializationError(string data) => OnInitializationError?.Invoke(data);
         [UsedImplicitly] public void AuthenticationSuccess(string data) => OnAuthenticationSuccess?.Invoke(data);
@@ -198,6 +214,5 @@ namespace RatYandex.Runtime
         [UsedImplicitly] public void IsLeaderboardAvailableError(string data) => OnIsLeaderboardAvailableError?.Invoke(data);
         [UsedImplicitly] public void SetLeaderboardEntrySuccess() => OnSetLeaderboardEntrySuccess?.Invoke();
         [UsedImplicitly] public void SetLeaderboardEntryError(string data) => OnSetLeaderboardEntryError?.Invoke(data);
-
     }
 }
