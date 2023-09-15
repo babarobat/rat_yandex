@@ -25,7 +25,8 @@ namespace RatYandex.Runtime
         [DllImport("__Internal")] private static extern void _ShowReview();
         [DllImport("__Internal")] private static extern void _CanReview();
         [DllImport("__Internal")] private static extern void _IsLeaderboardAvailable(string id);
-        [DllImport("__Internal")] private static extern void _SetLeaderboardEntry(string leaderboardId, int value, string payLoad);
+        [DllImport("__Internal")] private static extern void _SetLeaderboardEntry(string leaderboardId, int value);
+        [DllImport("__Internal")] private static extern void _GetLeaderboardEntries(string leaderboardId, bool includeUser, int quantityAround, int quantityTop);
 #endif
         public Action<string> OnInitializationSuccess;
         public Action<string> OnInitializationError;
@@ -59,6 +60,8 @@ namespace RatYandex.Runtime
         public Action<string> OnIsLeaderboardAvailableError;
         public Action OnSetLeaderboardEntrySuccess;
         public Action<string> OnSetLeaderboardEntryError;
+        public Action<string> OnGetLeaderboardEntriesSuccess;
+        public Action<string> OnGetLeaderboardEntriesError;
     
         public void WebWindowAlert(string message)
         {
@@ -179,7 +182,13 @@ namespace RatYandex.Runtime
         public void SetLeaderboardEntry(SetLeaderboardEntryRequestPayload data)
         {
 #if RAT_YANDEX
-            _SetLeaderboardEntry(data.LeaderBoardId, data.Value, data.PayLoad);
+            _SetLeaderboardEntry(data.LeaderBoardId, data.Value);
+#endif
+        }
+        public void GetLeaderboardEntries(GetLeaderboardEntriesRequestPayload data)
+        {
+#if RAT_YANDEX
+            _GetLeaderboardEntries(data.LeaderboardId, data.IncludeUser, data.QuantityAround, data.QuantityTop);
 #endif
         }
         [UsedImplicitly] public void InitializationSuccess(string data) => OnInitializationSuccess?.Invoke(data);
@@ -214,5 +223,7 @@ namespace RatYandex.Runtime
         [UsedImplicitly] public void IsLeaderboardAvailableError(string data) => OnIsLeaderboardAvailableError?.Invoke(data);
         [UsedImplicitly] public void SetLeaderboardEntrySuccess() => OnSetLeaderboardEntrySuccess?.Invoke();
         [UsedImplicitly] public void SetLeaderboardEntryError(string data) => OnSetLeaderboardEntryError?.Invoke(data);
+        [UsedImplicitly] public void GetLeaderboardEntriesSuccess(string data) => OnGetLeaderboardEntriesSuccess?.Invoke(data);
+        [UsedImplicitly] public void GetLeaderboardEntriesError(string data) => OnGetLeaderboardEntriesError?.Invoke(data);
     }
 }

@@ -67,7 +67,11 @@ mergeInto(LibraryManager.library, {
         IsLeaderboardAvailable(UTF8ToString(leaderboardId));
     },
 
-    _SetLeaderboardEntry: function (leaderboardId, value, payLoad) {
-        SetLeaderboardEntry(UTF8ToString(leaderboardId), value, UTF8ToString(payLoad));
+    _SetLeaderboardEntry: function (leaderboardId, value) {
+        SetLeaderboardEntry(UTF8ToString(leaderboardId), value);
+    },
+
+    _GetLeaderboardEntries: function (leaderboardId, includeUser, quantityAround, quantityTop) {
+        GetLeaderboardEntries(UTF8ToString(leaderboardId), includeUser, quantityAround, quantityTop);
     },
 });

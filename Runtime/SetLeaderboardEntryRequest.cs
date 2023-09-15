@@ -5,9 +5,8 @@ namespace RatYandex.Runtime
 {
     public class SetLeaderboardEntryRequestPayload
     {
-        [JsonProperty("leaderboard_id")] public string LeaderBoardId;
-        [JsonProperty("value")] public int Value;
-        [JsonProperty("payLoad")] public string PayLoad;
+        public string LeaderBoardId;
+        public int Value;
     }
     
     internal class SetLeaderboardEntryRequest : ARequestWithPayloadEmptyResult<SetLeaderboardEntryRequestPayload>

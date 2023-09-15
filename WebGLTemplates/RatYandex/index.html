@@ -302,9 +302,9 @@
         console.log('IsLeaderboardAvailable from web ');
 
         try {
-            const isAuth = player.getMode() === 'lite';
+            const isAuthActive = player.getMode() !== 'lite';
 
-            if (!isAuth){
+            if (!isAuthActive){
                 let result = {
                     "value": false,
                     "reason": "no_auth"
@@ -329,6 +329,39 @@
         } catch (e) {
             console.error(e)
             SendError('IsLeaderboardAvailableError', e.message);
+        }
+    }
+
+    async function SetLeaderboardEntry(leaderboardId, value) {
+        console.log('SetLeaderboardEntry from web ');
+        try {
+            const lb = await ysdk.getLeaderboards();
+            await lb.setLeaderboardScore(leaderboardId, value);
+
+            SendMessage('SetLeaderboardEntrySuccess');
+
+        } catch (e) {
+            console.error(e)
+            SendError('SetLeaderboardEntryError', e.message);
+        }
+    }
+
+    async function GetLeaderboardEntries(leaderboardId, includeUser, quantityAround, quantityTop) {
+        console.log('SetLeaderboardEntry from web ');
+        try {
+            const lb = await ysdk.getLeaderboards();
+            const res = await lb.getLeaderboardEntries(leaderboardId, {
+                quantityTop: quantityTop,
+                includeUser: includeUser,
+                quantityAround: quantityAround
+            });
+            let data = JSON.stringify(res);
+
+            SendMessageWithArgs('GetLeaderboardEntriesSuccess', data);
+
+        } catch (e) {
+            console.error(e)
+            SendError('GetLeaderboardEntriesError', e.message);
         }
     }
 
@@ -481,8 +514,8 @@
     }
 
     function SendMessageWithArgs(methodName, args) {
-        //console.log('send message to ' + methodName + ': ' + args);
         console.log('send message to ' + methodName);
+        //console.log(args);
         game.SendMessage("ya_api", methodName, args);
     }
 

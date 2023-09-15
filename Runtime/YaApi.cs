@@ -1,4 +1,3 @@
-using System;
 using System.Collections;
 using System.Threading.Tasks;
 using UnityEngine;
@@ -138,16 +137,30 @@ namespace RatYandex.Runtime
             return request.Result;
         }
 
-        public async Task SetLeaderboardEntry(string leaderBoardId, int value, string payLoad)
+        public async Task SetLeaderboardEntry(string leaderBoardId, int value)
         {
             var request = new SetLeaderboardEntryRequest(_bridge, new SetLeaderboardEntryRequestPayload
             {
                 LeaderBoardId = leaderBoardId,
                 Value = value,
-                PayLoad = payLoad
             });
 
             await SendRequest(request);
+        }
+
+        public async Task<GetLeaderboardEntriesResult> GetLeaderboardEntries(string leaderBoardId, bool includeUser, int quantityAround, int quantityTop)
+        {
+            var request = new GetLeaderboardEntriesRequest(_bridge, new GetLeaderboardEntriesRequestPayload
+            {
+                LeaderboardId = leaderBoardId,
+                IncludeUser = includeUser,
+                QuantityAround = quantityAround,
+                QuantityTop = quantityTop
+            });
+
+            await SendRequest(request);
+            
+            return request.Result;
         }
 
         private async Task SendRequest(ARequest request) 
