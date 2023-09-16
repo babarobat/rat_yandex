@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Threading.Tasks;
 using UnityEngine;
@@ -7,13 +8,21 @@ namespace RatYandex.Runtime
 {
     public class YaApi
     {
+        public event Action OnWindowFocused;
+        
         private readonly YaApiBridge _bridge;
 
         public YaApi()
         {
             var container = new GameObject("ya_api");
             _bridge = container.AddComponent<YaApiBridge>();
+            _bridge.OnWindowFocused = OnWindowFocusedHandler;
             Object.DontDestroyOnLoad(_bridge);
+        }
+
+        private void OnWindowFocusedHandler()
+        {
+            OnWindowFocused?.Invoke();
         }
 
         public void WebWindowAlert(string message) => _bridge.WebWindowAlert(message);

@@ -139,6 +139,7 @@
             console.log('ysdk inited');
             window.ysdk = ysdk;
             ysdk.features.LoadingAPI?.ready();
+            window.onfocus = OnFocus;
             console.log('ysdk ready');
 
             player = await ysdk.getPlayer();
@@ -156,6 +157,10 @@
             console.error(e)
             SendError('InitializationError', e.message);
         }
+    }
+
+    function OnFocus(){
+        SendMessage('WindowFocused');
     }
 
     async function CanReview() {
@@ -515,7 +520,7 @@
 
     function SendMessageWithArgs(methodName, args) {
         console.log('send message to ' + methodName);
-        //console.log(args);
+        console.log(args);
         game.SendMessage("ya_api", methodName, args);
     }
 

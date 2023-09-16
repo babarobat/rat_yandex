@@ -62,6 +62,7 @@ namespace RatYandex.Runtime
         public Action<string> OnSetLeaderboardEntryError;
         public Action<string> OnGetLeaderboardEntriesSuccess;
         public Action<string> OnGetLeaderboardEntriesError;
+        public Action OnWindowFocused;
     
         public void WebWindowAlert(string message)
         {
@@ -225,5 +226,6 @@ namespace RatYandex.Runtime
         [UsedImplicitly] public void SetLeaderboardEntryError(string data) => OnSetLeaderboardEntryError?.Invoke(data);
         [UsedImplicitly] public void GetLeaderboardEntriesSuccess(string data) => OnGetLeaderboardEntriesSuccess?.Invoke(data);
         [UsedImplicitly] public void GetLeaderboardEntriesError(string data) => OnGetLeaderboardEntriesError?.Invoke(data);
+        [UsedImplicitly] public void WindowFocused() => OnWindowFocused?.Invoke();
     }
 }
