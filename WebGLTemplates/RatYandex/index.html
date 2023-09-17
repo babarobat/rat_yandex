@@ -361,7 +361,7 @@
                 quantityAround: quantityAround
             });
             let data = JSON.stringify(res);
-
+            //console.log(data);
             SendMessageWithArgs('GetLeaderboardEntriesSuccess', data);
 
         } catch (e) {
@@ -375,7 +375,7 @@
         console.log('AuthDialogOpen from web');
 
         try {
-            await sdk.auth.openAuthDialog();
+            await ysdk.auth.openAuthDialog();
 
             player = await ysdk.getPlayer();
 
@@ -520,7 +520,7 @@
 
     function SendMessageWithArgs(methodName, args) {
         console.log('send message to ' + methodName);
-        console.log(args);
+        //console.log(args);
         game.SendMessage("ya_api", methodName, args);
     }
 
