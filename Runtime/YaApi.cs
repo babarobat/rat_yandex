@@ -16,15 +16,10 @@ namespace RatYandex.Runtime
         {
             var container = new GameObject("ya_api");
             _bridge = container.AddComponent<YaApiBridge>();
-            _bridge.OnWindowFocused = OnWindowFocusedHandler;
+            _bridge.OnWindowFocused = () => OnWindowFocused?.Invoke();
             Object.DontDestroyOnLoad(_bridge);
         }
-
-        private void OnWindowFocusedHandler()
-        {
-            OnWindowFocused?.Invoke();
-        }
-
+        
         public void WebWindowAlert(string message) => _bridge.WebWindowAlert(message);
         public void WebConsoleLog(string message) => _bridge.WebConsoleLog(message);
 
